@@ -10,10 +10,11 @@
     <ProjectReference Include="..\..\NG.Auth.Business.Impl\NG.Auth.Business.Impl.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Label="Startup">
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.6.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
   </ItemGroup>
 
   <ItemGroup Label="Serilog">

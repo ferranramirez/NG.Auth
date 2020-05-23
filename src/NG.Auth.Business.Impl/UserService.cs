@@ -2,7 +2,7 @@
 using NG.Auth.Business.Contract;
 using NG.Auth.Business.Contract.InternalServices;
 using NG.Auth.Domain;
-using NG.Configuration.Business.BusinessExceptions;
+using NG.Common.Business.BusinessExceptions;
 using NG.DBManager.Infrastructure.Contracts.Models;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
 using System.Threading.Tasks;

@@ -22,7 +22,6 @@ namespace NG.Auth.Presentation.WebAPI
                    .ReadFrom.Configuration(Configuration)
                    .Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
                    .WriteTo.File(new JsonFormatter(), @"c:\temp\logs\Auth.json", shared: false)
-                   //.WriteTo.Seq(Environment.GetEnvironmentVariable("SEQ_URL") ?? "http://localhost:5341")
                    .WriteTo.Elasticsearch(Environment.GetEnvironmentVariable("ELASTIC_URL") ?? "#{ELASTIC_URL}#")
                    .CreateLogger();
 

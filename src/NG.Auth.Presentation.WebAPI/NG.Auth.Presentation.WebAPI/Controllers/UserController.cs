@@ -26,7 +26,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Creates a new User
+        /// Create a new User
         /// </summary>
         /// <param name="UserToRegister">The new User to be registered</param>
         /// <remarks>
@@ -38,9 +38,9 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         /// </remarks>
         [HttpPost("Register")]
         [ProducesResponseType(typeof(ApiError), 543)]
-        [ProducesResponseType(typeof(ApiError), 500)]
+        [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Register(User user)
         {
             if (!ModelState.IsValid)
@@ -48,14 +48,14 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _userService.Register(user);
+            var response = await _userService.Register(user);
 
-            return Ok();
+            return Ok(response);
         }
 
 
         /// <summary>
-        /// Generates a token for the given User
+        /// Generate a token for the given User
         /// </summary>
         /// <param name="Credentials">The user credentials to log in</param>
         /// <remarks>
@@ -68,7 +68,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         /// <returns></returns>
         [HttpPost("Login")]
         [ProducesResponseType(typeof(ApiError), 543)]
-        [ProducesResponseType(typeof(ApiError), 500)]
+        [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public IActionResult Login(Credentials credentials)
