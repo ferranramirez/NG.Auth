@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace NG.Auth.Presentation.WebAPI.Extensions
+namespace NG.Auth.Presentation.Configuration.Extensions
 {
     public static class JwtServiceExtensions
     {

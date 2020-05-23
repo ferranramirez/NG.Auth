@@ -4,7 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NG.Auth.Business.Impl.IoCModule;
-using NG.Auth.Presentation.WebAPI.Extensions;
+using NG.Common.Presentation.Extensions;
+using NG.Common.Presentation.Filters;
+using System.Reflection;
 
 namespace NG.Auth.Presentation.WebAPI
 {
@@ -22,11 +24,17 @@ namespace NG.Auth.Presentation.WebAPI
         {
             services.AddControllers();
 
-            services.AddJwtAuthentication(Configuration);
-
-            services.AddSwaggerDocumentation();
-
             services.Configure<IConfiguration>(Configuration);
+
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            services.AddSwaggerDocumentation(Configuration.GetSection("Documentation"), xmlFile);
+
+            services.AddJwtAuthentication(Configuration.GetSection("Secrets"));
+
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(ApiExceptionFilter));
+            });
 
             services.AddBusinessServices();
         }
@@ -39,11 +47,13 @@ namespace NG.Auth.Presentation.WebAPI
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseLogScopeMiddleware();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseSwaggerDocumentation();
+            app.UseSwaggerDocumentation(Configuration.GetSection("Documentation"));
 
             app.UseAuthentication();
 

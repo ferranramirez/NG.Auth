@@ -24,7 +24,9 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         [HttpGet]
         public ActionResult Everyone()
         {
-            _logger.LogInformation("Everyone can access here!");
+            _logger.LogInformation("Before");
+
+            _logger.LogInformation("After");
             return Ok("Everyone can access here!!");
         }
 

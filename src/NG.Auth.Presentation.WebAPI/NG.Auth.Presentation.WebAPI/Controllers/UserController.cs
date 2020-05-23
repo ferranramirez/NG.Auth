@@ -2,7 +2,11 @@
 using Microsoft.Extensions.Logging;
 using NG.Auth.Business.Contract;
 using NG.Auth.Domain;
+using NG.Common.Presentation.Filters;
 using NG.DBManager.Infrastructure.Contracts.Models;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace NG.Auth.Presentation.WebAPI.Controllers
 {
@@ -21,28 +25,58 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Creates a new User
+        /// </summary>
+        /// <param name="UserToRegister">The new User to be registered</param>
+        /// <remarks>
+        /// ## Response code meanings
+        /// - 200 - User successfully created.
+        /// - 400 - The model is not properly built.
+        /// - 500 - An internal server error. Something bad and unexpected happened.
+        /// - 543 - A handled error. This error was expected, check the message.
+        /// </remarks>
         [HttpPost("Register")]
-        public ActionResult Register(User user)
+        [ProducesResponseType(typeof(ApiError), 543)]
+        [ProducesResponseType(typeof(ApiError), 500)]
+        [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Register(User user)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            bool registered = _userService.Register(user);
+            await _userService.Register(user);
 
-            return Ok(registered);
+            return Ok();
         }
 
+
+        /// <summary>
+        /// Generates a token for the given User
+        /// </summary>
+        /// <param name="Credentials">The user credentials to log in</param>
+        /// <remarks>
+        /// ## Response code meanings
+        /// - 200 - Token succesfully created.
+        /// - 400 - The model is not properly built.
+        /// - 500 - An internal server error. Something bad and unexpected happened.
+        /// - 543 - A handled error. This error was expected, check the message.
+        /// </remarks>
+        /// <returns></returns>
         [HttpPost("Login")]
-        public ActionResult Login(Credentials credentials)
+        [ProducesResponseType(typeof(ApiError), 543)]
+        [ProducesResponseType(typeof(ApiError), 500)]
+        [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public IActionResult Login(Credentials credentials)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            _logger.LogInformation("Someone trying to log in");
 
             string token = _userService.Authenticate(credentials);
 

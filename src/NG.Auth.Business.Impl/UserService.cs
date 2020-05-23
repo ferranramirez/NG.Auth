@@ -2,10 +2,10 @@
 using NG.Auth.Business.Contract;
 using NG.Auth.Business.Contract.InternalServices;
 using NG.Auth.Domain;
+using NG.Configuration.Business.BusinessExceptions;
 using NG.DBManager.Infrastructure.Contracts.Models;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
-using System;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace NG.Auth.Business.Impl
 {
@@ -28,37 +28,33 @@ namespace NG.Auth.Business.Impl
             _logger = logger;
         }
 
-        public bool Register(User user)
+        public async Task<bool> Register(User user)
         {
             user.Password = _passwordHasher.Hash(user.Password);
             _unitOfWork.User.Add(user);
-            return _unitOfWork.Commit() == 1;
+            return await _unitOfWork.CommitAsync() == 1;
         }
 
         public string Authenticate(Credentials credentials)
         {
             var user = _unitOfWork.User
-                .Find(u => u.Email == credentials.EmailAddress)
-                .SingleOrDefault();
+                .GetByEmail(credentials.EmailAddress);
 
             if (user == null)
             {
-                _logger.LogError("Not found user with such email address {0}", credentials.EmailAddress);
-                throw new Exception("Not found user with such email address ");
+                throw new NotGuiriBusinessException("User not found", 101);
             }
 
             var (Verified, NeedsUpgrade) = _passwordHasher.Check(user.Password, credentials.Password);
 
             if (!Verified)
             {
-                _logger.LogError("Wrong password ({0}), for the user {1}", credentials.Password, credentials.EmailAddress);
-                throw new Exception("Wrong password: The given password does not match the stored password in the database");
+                throw new NotGuiriBusinessException("Wrong password: The given password does not match the user's password", 102);
             }
 
-            _logger.LogInformation("User {0} {1} successfully logged in", user.Name, user.Surname);
+            _logger.LogInformation("User {0} successfully logged in", user.Id);
 
             return _authorizationProvider.GetToken(user);
         }
     }
-
 }

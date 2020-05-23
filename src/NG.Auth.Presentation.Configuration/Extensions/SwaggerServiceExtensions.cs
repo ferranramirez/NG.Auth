@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System;
@@ -6,15 +7,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace NG.Auth.Presentation.WebAPI.Extensions
+namespace NG.Auth.Presentation.Configuration.Extensions
 {
     public static class SwaggerServiceExtensions
     {
-        public static void AddSwaggerDocumentation(this IServiceCollection services)
+        public static void AddSwaggerDocumentation(
+            this IServiceCollection services,
+            IConfiguration config)
         {
+            var title = config.GetValue<string>("title");
+            var version = config.GetValue<string>("version");
+
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Authentication API", Version = "v1", });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = title, Version = version, });
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
@@ -50,14 +56,18 @@ namespace NG.Auth.Presentation.WebAPI.Extensions
             });
         }
 
-        public static void UseSwaggerDocumentation(this IApplicationBuilder app)
+        public static void UseSwaggerDocumentation(
+            this IApplicationBuilder app,
+            IConfiguration config)
         {
+            var title = config.GetValue<string>("title");
+
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Authentication API");
-                c.DocumentTitle = "Authentication API";
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", title);
+                c.DocumentTitle = title;
             });
         }
     }
