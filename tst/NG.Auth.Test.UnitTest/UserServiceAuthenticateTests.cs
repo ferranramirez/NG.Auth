@@ -57,7 +57,11 @@ namespace NG.Auth.Test.UnitTest
             _passwordHasherMock.Setup(pwdH => pwdH.Check("secret123", "secret123")).Returns((true, false));
             _authorizationProviderMock.Setup(authP => authP.GetToken(authUser)).Returns(expected);
 
-            Credentials credentials = new Credentials("basic@test.org", "secret123");
+            Credentials credentials = new Credentials()
+            {
+                EmailAddress = "basic@test.org",
+                Password = "secret123"
+            };
 
             // Act
             var actual = _userService.Authenticate(credentials);
@@ -72,7 +76,11 @@ namespace NG.Auth.Test.UnitTest
             // Arrange
             _unitOfWorkMock.Setup(uow => uow.User.GetByEmail("WRONG_basic@test.org")).Returns((User)null);
 
-            Credentials credentials = new Credentials("WRONG_basic@test.org", "secret123");
+            Credentials credentials = new Credentials()
+            {
+                EmailAddress = "WRONG_basic@test.org",
+                Password = "secret123"
+            };
 
             // Act
             Action action = () => _userService.Authenticate(credentials);
@@ -88,7 +96,11 @@ namespace NG.Auth.Test.UnitTest
             // Arrange
             _unitOfWorkMock.Setup(uow => uow.User.GetByEmail("basic@test.org")).Returns(user);
 
-            Credentials credentials = new Credentials("basic@test.org", "WRONG_secret123");
+            Credentials credentials = new Credentials()
+            {
+                EmailAddress = "basic@test.org",
+                Password = "WRONG_secret123"
+            };
 
             // Act
             Action action = () => _userService.Authenticate(credentials);
