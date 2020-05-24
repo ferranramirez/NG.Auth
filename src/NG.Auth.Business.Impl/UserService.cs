@@ -29,7 +29,7 @@ namespace NG.Auth.Business.Impl
             _logger = logger;
         }
 
-        public async Task<bool> Register(User user)
+        public async Task<bool> RegisterAsync(User user)
         {
             user.Password = _passwordHasher.Hash(user.Password);
             _unitOfWork.User.Add(user);

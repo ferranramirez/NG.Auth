@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NG.Auth.Test.E2ETest", "tst\NG.Auth.Test.E2ETest\NG.Auth.Test.E2ETest.csproj", "{C3DA00C7-603A-4081-AC23-737875B408EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{26B10D06-4B51-4E9C-929D-5E6CC8F220C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26B10D06-4B51-4E9C-929D-5E6CC8F220C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26B10D06-4B51-4E9C-929D-5E6CC8F220C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3DA00C7-603A-4081-AC23-737875B408EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3DA00C7-603A-4081-AC23-737875B408EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3DA00C7-603A-4081-AC23-737875B408EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3DA00C7-603A-4081-AC23-737875B408EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{A35E3875-3BF3-4D0D-83AC-1D1296BC9CB0} = {CACE34BE-E06A-464D-A47E-B441E27FF7AB}
 		{8EE83157-FD93-4AB7-A03F-4711290566E7} = {80F555B4-79AB-4AC8-A2EC-EC45CACE6AD9}
 		{26B10D06-4B51-4E9C-929D-5E6CC8F220C2} = {4DB4543C-D2AD-443C-BCE3-E5A9653155FA}
+		{C3DA00C7-603A-4081-AC23-737875B408EE} = {80F555B4-79AB-4AC8-A2EC-EC45CACE6AD9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {94912DB7-E70E-46C7-97D7-406145F70DF4}

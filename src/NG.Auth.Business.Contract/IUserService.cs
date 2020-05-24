@@ -6,7 +6,7 @@ namespace NG.Auth.Business.Contract
 {
     public interface IUserService
     {
-        Task<bool> Register(User user);
+        Task<bool> RegisterAsync(User user);
         string Authenticate(Credentials credentials);
     }
 }

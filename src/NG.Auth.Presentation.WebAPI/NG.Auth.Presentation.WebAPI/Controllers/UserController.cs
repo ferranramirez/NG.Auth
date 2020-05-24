@@ -48,7 +48,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _userService.Register(user);
+            var response = await _userService.RegisterAsync(user);
 
             return Ok(response);
         }
