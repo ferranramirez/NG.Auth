@@ -4,8 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NG.Auth.Business.Impl.IoCModule;
-using NG.Common.Presentation.Extensions;
-using NG.Common.Presentation.Filters;
+using NG.Common.Library.Extensions;
+using NG.Common.Library.Filters;
 using System.Reflection;
 
 namespace NG.Auth.Presentation.WebAPI

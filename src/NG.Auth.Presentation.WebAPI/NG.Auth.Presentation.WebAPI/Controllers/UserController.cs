@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using NG.Auth.Business.Contract;
 using NG.Auth.Domain;
-using NG.Common.Presentation.Filters;
+using NG.Common.Library.Filters;
 using NG.DBManager.Infrastructure.Contracts.Models;
 using System.Collections.Generic;
 using System.Net;
