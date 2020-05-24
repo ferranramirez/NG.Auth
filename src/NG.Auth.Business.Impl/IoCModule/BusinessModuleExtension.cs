@@ -2,6 +2,7 @@
 using NG.Auth.Business.Contract;
 using NG.Auth.Business.Contract.InternalServices;
 using NG.Auth.Business.Impl.InternalServices;
+using NG.Common.Services.AuthorizationProvider;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
 using NG.DBManager.Infrastructure.Impl.EF.IoCModule;
 using NG.DBManager.Infrastructure.Impl.EF.UnitsOfWork;

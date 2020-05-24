@@ -3,6 +3,7 @@ using NG.Auth.Business.Contract;
 using NG.Auth.Business.Contract.InternalServices;
 using NG.Auth.Domain;
 using NG.Common.Library.Exceptions;
+using NG.Common.Services.AuthorizationProvider;
 using NG.DBManager.Infrastructure.Contracts.Models;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
 using System.Threading.Tasks;
@@ -52,9 +53,9 @@ namespace NG.Auth.Business.Impl
                 throw new NotGuiriBusinessException("Wrong password: The given password does not match the user's password", 102);
             }
 
-            _logger.LogInformation("User {0} successfully logged in", user.Id);
+            AuthorizedUser authUser = new AuthorizedUser(user.Email, user.Role.ToString());
 
-            return _authorizationProvider.GetToken(user);
+            return _authorizationProvider.GetToken(authUser);
         }
     }
 }
