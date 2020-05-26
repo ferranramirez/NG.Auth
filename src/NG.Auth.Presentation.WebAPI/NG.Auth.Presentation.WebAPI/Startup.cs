@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NG.Auth.Business.Impl.IoCModule;
+using NG.Auth.Presentation.WebAPI.ModelBinder;
 using NG.Common.Library.Extensions;
 using NG.Common.Library.Filters;
 using System.Reflection;
@@ -22,6 +23,12 @@ namespace NG.Auth.Presentation.WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc(options =>
+            {
+                options.ModelBinderProviders.Insert(0, new RegisterBinderProvider()); //Register Custom Model binder
+                options.Filters.Add(typeof(ApiExceptionFilter));
+            });
+
             services.AddControllers();
 
             services.Configure<IConfiguration>(Configuration);
@@ -30,11 +37,6 @@ namespace NG.Auth.Presentation.WebAPI
             services.AddSwaggerDocumentation(Configuration.GetSection("Documentation"), xmlFile);
 
             services.AddJwtAuthentication(Configuration.GetSection("Secrets"));
-
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(typeof(ApiExceptionFilter));
-            });
 
             services.AddBusinessServices();
         }

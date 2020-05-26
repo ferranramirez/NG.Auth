@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NG.Auth.Business.Contract;
+using System;
 
 namespace NG.Auth.Presentation.WebAPI.Controllers
 {
@@ -21,8 +22,8 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet]
-        public ActionResult Everyone()
+        [HttpGet("{Id}")]
+        public IActionResult Everyone(Guid Id)
         {
             _logger.LogInformation("Before");
 
@@ -32,14 +33,14 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
 
         [Authorize]
         [HttpGet("BasicUser")]
-        public ActionResult BasicUser()
+        public IActionResult BasicUser()
         {
             return Ok("You are an authorised user");
         }
 
         [Authorize(Roles = "Premium")]
         [HttpGet("Premium")]
-        public ActionResult Premium()
+        public IActionResult Premium()
         {
             return Ok("You are a PREMIUM user");
         }

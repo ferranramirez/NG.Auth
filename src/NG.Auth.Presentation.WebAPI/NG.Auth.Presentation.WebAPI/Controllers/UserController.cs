@@ -28,7 +28,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         /// <summary>
         /// Create a new User
         /// </summary>
-        /// <param name="UserToRegister">The new User to be registered</param>
+        /// <param name="userToRegister">The new User to be registered</param>
         /// <remarks>
         /// ## Response code meanings
         /// - 200 - User successfully created.
@@ -41,16 +41,10 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Register(User user)
+        public async Task<IActionResult> Register(User user, [FromQuery] UserToRegister userToRegister)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var response = await _userService.RegisterAsync(user);
-
-            return Ok(response);
+            return Ok(user);
         }
 
 
@@ -73,11 +67,6 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public IActionResult Login(Credentials credentials)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             string token = _userService.Authenticate(credentials);
 
             return Ok(token);
