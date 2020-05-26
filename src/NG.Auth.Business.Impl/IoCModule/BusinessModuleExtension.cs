@@ -21,7 +21,7 @@ namespace NG.Auth.Business.Impl.IoCModule
             }
 
             services.AddInfrastructureServices()
-                    .AddScoped<IPasswordHasher, PasswordHasher>()
+                    .AddSingleton<IPasswordHasher, PasswordHasher>()
                     .AddScoped<IAuthorizationProvider, AuthorizationProvider>()
                     .AddScoped<IAuthUnitOfWork, AuthUnitOfWork>()
                     .AddScoped<IUserService, UserService>();

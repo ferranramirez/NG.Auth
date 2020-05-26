@@ -44,7 +44,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         public async Task<IActionResult> Register(User user, [FromQuery] UserToRegister userToRegister)
         {
             var response = await _userService.RegisterAsync(user);
-            return Ok(user);
+            return Ok(response);
         }
 
 

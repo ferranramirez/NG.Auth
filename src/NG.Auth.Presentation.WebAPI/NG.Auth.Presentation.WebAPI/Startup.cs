@@ -8,6 +8,7 @@ using NG.Auth.Presentation.WebAPI.ModelBinder;
 using NG.Common.Library.Extensions;
 using NG.Common.Library.Filters;
 using System.Reflection;
+using System.Web.Mvc;
 
 namespace NG.Auth.Presentation.WebAPI
 {
@@ -25,7 +26,8 @@ namespace NG.Auth.Presentation.WebAPI
         {
             services.AddMvc(options =>
             {
-                options.ModelBinderProviders.Insert(0, new RegisterBinderProvider()); //Register Custom Model binder
+                RegisterBinderProvider registerBinderProvider = DependencyResolver.Current.GetService<RegisterBinderProvider>();
+                options.ModelBinderProviders.Insert(0, registerBinderProvider);
                 options.Filters.Add(typeof(ApiExceptionFilter));
             });
 
