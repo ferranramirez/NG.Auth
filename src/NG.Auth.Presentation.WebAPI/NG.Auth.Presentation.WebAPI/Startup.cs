@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NG.Auth.Business.Impl.IoCModule;
+using NG.Auth.Presentation.WebAPI.Middleware;
 using NG.Auth.Presentation.WebAPI.ModelBinder;
 using NG.Common.Library.Extensions;
 using NG.Common.Library.Filters;
@@ -44,12 +45,9 @@ namespace NG.Auth.Presentation.WebAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseMiddleware<ErrorsCheckMiddleware>();
 
-            app.UseLogScopeMiddleware();
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
 
@@ -60,6 +58,8 @@ namespace NG.Auth.Presentation.WebAPI
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseLogScopeMiddleware();
 
             app.UseEndpoints(endpoints =>
             {
