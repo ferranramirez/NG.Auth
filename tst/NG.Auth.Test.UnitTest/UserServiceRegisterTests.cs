@@ -1,19 +1,21 @@
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Moq;
 using NG.Auth.Business.Contract;
 using NG.Auth.Business.Contract.InternalServices;
 using NG.Auth.Business.Impl;
-using NG.Auth.Test.UnitTest.Fixture;
+using NG.Common.Library.Exceptions;
 using NG.Common.Services.AuthorizationProvider;
 using NG.DBManager.Infrastructure.Contracts.Models;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace NG.Auth.Test.UnitTest
 {
-    public class UserServiceRegisterTests : IClassFixture<IoCModule>
+    public class UserServiceRegisterTests
     {
         private readonly Mock<IAuthUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IAuthorizationProvider> _authorizationProviderMock;
@@ -21,7 +23,6 @@ namespace NG.Auth.Test.UnitTest
         private readonly NullLogger<UserService> _nullLogger;
         private readonly IUserService _userService;
         private readonly User user;
-        private readonly string expected;
         private readonly string hashedPassword;
 
         public UserServiceRegisterTests()
@@ -41,7 +42,14 @@ namespace NG.Auth.Test.UnitTest
             _authorizationProviderMock = new Mock<IAuthorizationProvider>();
             _nullLogger = new NullLogger<UserService>();
 
-            _userService = new UserService(_unitOfWorkMock.Object, _passwordHasherMock.Object, _authorizationProviderMock.Object, _nullLogger);
+            var errorsDictionary = new Dictionary<BusinessErrorType, BusinessErrorObject>
+            {
+                { BusinessErrorType.UserNotFound, new BusinessErrorObject() { ErrorCode = 101, Message = "Error test" } },
+                { BusinessErrorType.WrongPassword, new BusinessErrorObject() { ErrorCode = 102, Message = "Error test" } }
+            };
+            var _options = Options.Create(errorsDictionary);
+
+            _userService = new UserService(_unitOfWorkMock.Object, _passwordHasherMock.Object, _authorizationProviderMock.Object, _nullLogger, _options);
         }
 
         [Fact]

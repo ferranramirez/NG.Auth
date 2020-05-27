@@ -20,8 +20,8 @@ namespace NG.Auth.Test.E2ETest
         {
             _httpUtilities = httpUtilities;
 
-            var Configuration = _httpUtilities.ServiceProvider.GetService<IConfiguration>();
-            _authorizationProvider = ioCModule.BuildServiceProvider(Configuration).GetService<IAuthorizationProvider>();
+            var Configuration = _httpUtilities.ServiceProvider.GetRequiredService<IConfiguration>();
+            _authorizationProvider = ioCModule.BuildServiceProvider(Configuration).GetRequiredService<IAuthorizationProvider>();
         }
 
         [Fact]

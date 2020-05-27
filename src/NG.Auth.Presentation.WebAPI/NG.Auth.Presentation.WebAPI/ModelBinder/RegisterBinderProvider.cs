@@ -11,7 +11,7 @@ namespace NG.Auth.Presentation.WebAPI.ModelBinder
         {
             if (context.Metadata.ModelType == typeof(User))
             {
-                var passwordHasher = context.Services.GetService<IPasswordHasher>();
+                var passwordHasher = context.Services.GetRequiredService<IPasswordHasher>();
                 return new RegisterBinder(passwordHasher);
             }
 

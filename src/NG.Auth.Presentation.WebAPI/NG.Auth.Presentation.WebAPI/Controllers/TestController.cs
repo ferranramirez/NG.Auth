@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NG.Auth.Business.Contract;
-using System;
 
 namespace NG.Auth.Presentation.WebAPI.Controllers
 {
@@ -22,13 +21,13 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{Id}")]
-        public IActionResult Everyone(Guid Id)
+        [HttpGet]
+        public IActionResult Everyone()
         {
             _logger.LogInformation("Before");
 
             _logger.LogInformation("After");
-            return Ok("Everyone can access here!!");
+            return Ok("Everyone can access here!");
         }
 
         [Authorize]

@@ -8,7 +8,6 @@ using NG.Auth.Presentation.WebAPI.ModelBinder;
 using NG.Common.Library.Extensions;
 using NG.Common.Library.Filters;
 using System.Reflection;
-using System.Web.Mvc;
 
 namespace NG.Auth.Presentation.WebAPI
 {
@@ -26,8 +25,7 @@ namespace NG.Auth.Presentation.WebAPI
         {
             services.AddMvc(options =>
             {
-                RegisterBinderProvider registerBinderProvider = DependencyResolver.Current.GetService<RegisterBinderProvider>();
-                options.ModelBinderProviders.Insert(0, registerBinderProvider);
+                options.ModelBinderProviders.Insert(0, new RegisterBinderProvider());
                 options.Filters.Add(typeof(ApiExceptionFilter));
             });
 
@@ -40,7 +38,7 @@ namespace NG.Auth.Presentation.WebAPI
 
             services.AddJwtAuthentication(Configuration.GetSection("Secrets"));
 
-            services.AddBusinessServices();
+            services.AddBusinessServices(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
