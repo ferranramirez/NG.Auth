@@ -31,7 +31,7 @@ namespace NG.Auth.Test.E2ETest
             Credentials credentials = new Credentials()
             {
                 EmailAddress = "basic@test.org",
-                Password = "secret123"
+                Password = "basicPassword123"
             };
 
             var client = _httpUtilities.HttpClient;

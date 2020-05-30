@@ -4,6 +4,7 @@ using Moq;
 using NG.Auth.Business.Contract;
 using NG.Auth.Business.Contract.InternalServices;
 using NG.Auth.Business.Impl;
+using NG.Auth.Domain;
 using NG.Common.Library.Exceptions;
 using NG.Common.Services.AuthorizationProvider;
 using NG.DBManager.Infrastructure.Contracts.Models;
@@ -23,6 +24,7 @@ namespace NG.Auth.Test.UnitTest
         private readonly NullLogger<UserService> _nullLogger;
         private readonly IUserService _userService;
         private readonly User user;
+        private readonly UserDto userDto;
         private readonly string hashedPassword;
 
         public UserServiceRegisterTests()
@@ -30,6 +32,13 @@ namespace NG.Auth.Test.UnitTest
             user = new User
             {
                 Id = Guid.NewGuid(),
+                Name = "Test",
+                Email = "basic@test.org",
+                Password = "secret123",
+            };
+
+            userDto = new UserDto
+            {
                 Name = "Test",
                 Email = "basic@test.org",
                 Password = "secret123",
@@ -61,7 +70,7 @@ namespace NG.Auth.Test.UnitTest
             _passwordHasherMock.Setup(pwdH => pwdH.Hash("secret123")).Returns(hashedPassword);
 
             // Act
-            var actual = await _userService.RegisterAsync(user);
+            var actual = await _userService.RegisterAsync(userDto);
 
             // Assert
             Assert.True(actual);
