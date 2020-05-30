@@ -6,8 +6,11 @@ using NG.Auth.Domain;
 using NG.Common.Library.Exceptions;
 using NG.Common.Services.AuthorizationProvider;
 using NG.DBManager.Infrastructure.Contracts.Models;
+using NG.DBManager.Infrastructure.Contracts.Models.Enums;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NG.Auth.Business.Impl
@@ -34,17 +37,28 @@ namespace NG.Auth.Business.Impl
             _errors = errors.Value;
         }
 
-        public async Task<bool> RegisterAsync(User user)
+        public async Task<bool> RegisterAsync(UserDto userDto)
         {
-            user.Password = _passwordHasher.Hash(user.Password);
+            User user = new User()
+            {
+                Id = Guid.NewGuid(),
+                Name = userDto.Name,
+                Surname = userDto.Surname,
+                Birthdate = userDto.Birthdate,
+                PhoneNumber = userDto.PhoneNumber,
+                Email = userDto.Email,
+                Password = _passwordHasher.Hash(userDto.Password),
+                Role = Role.Basic,
+                Image = null,
+            };
+
             _unitOfWork.User.Add(user);
             return await _unitOfWork.CommitAsync() == 1;
         }
 
         public string Authenticate(Credentials credentials)
         {
-            var user = _unitOfWork.User
-                .GetByEmail(credentials.EmailAddress);
+            User user = GetUser(credentials);
 
             if (user == null)
             {
@@ -60,9 +74,24 @@ namespace NG.Auth.Business.Impl
                 throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
             }
 
-            AuthorizedUser authUser = new AuthorizedUser(user.Email, user.Role.ToString());
+            AuthorizedUser authUser = new AuthorizedUser(user.Id, user.Email, user.Role.ToString());
 
             return _authorizationProvider.GetToken(authUser);
+        }
+
+        private User GetUser(Credentials credentials)
+        {
+            if (string.IsNullOrEmpty(credentials.PhoneNumber))
+            {
+                return _unitOfWork.User
+                    .GetByEmail(credentials.EmailAddress);
+            }
+            else
+            {
+                return _unitOfWork.User
+                   .Find(u => u.PhoneNumber == credentials.PhoneNumber)
+                   .SingleOrDefault();
+            }
         }
     }
 }

@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NG.Auth.Business.Impl.IoCModule;
 using NG.Auth.Presentation.WebAPI.Middleware;
-using NG.Auth.Presentation.WebAPI.ModelBinder;
 using NG.Common.Library.Extensions;
 using NG.Common.Library.Filters;
 using System.Reflection;
@@ -26,7 +25,6 @@ namespace NG.Auth.Presentation.WebAPI
         {
             services.AddMvc(options =>
             {
-                options.ModelBinderProviders.Insert(0, new RegisterBinderProvider());
                 options.Filters.Add(typeof(ApiExceptionFilter));
             });
 

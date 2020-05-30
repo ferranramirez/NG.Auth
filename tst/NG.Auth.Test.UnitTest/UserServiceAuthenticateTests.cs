@@ -31,7 +31,7 @@ namespace NG.Auth.Test.UnitTest
 
         public UserServiceAuthenticateTests()
         {
-            authUser = new AuthorizedUser("basic@test.org", "Basic");
+            authUser = new AuthorizedUser(Guid.NewGuid(), "basic@test.org", "Basic");
 
             expected = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJiYXNpY0B0ZXN0Lm9yZyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJCYXNpYyJ9.JFy76_gBh - i3NFBa2xO_k - h3k8ygqFlv1Qos94xvKvM";
 

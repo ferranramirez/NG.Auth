@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NG.Auth.Domain
 {
-    public class UserToRegister
+    public class UserDto
     {
         [Required]
         public string Name { get; set; }
