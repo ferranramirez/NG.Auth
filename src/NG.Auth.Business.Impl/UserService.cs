@@ -37,7 +37,7 @@ namespace NG.Auth.Business.Impl
             _errors = errors.Value;
         }
 
-        public async Task<bool> RegisterAsync(UserDto userDto)
+        public async Task<User> RegisterAsync(UserDto userDto)
         {
             User user = new User()
             {
@@ -53,7 +53,8 @@ namespace NG.Auth.Business.Impl
             };
 
             _unitOfWork.User.Add(user);
-            return await _unitOfWork.CommitAsync() == 1;
+            await _unitOfWork.CommitAsync();
+            return _unitOfWork.User.Get(user.Id);
         }
 
         public string Authenticate(Credentials credentials)

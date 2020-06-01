@@ -5,6 +5,7 @@ using NG.Auth.Business.Contract.InternalServices;
 using NG.Auth.Business.Impl.InternalServices;
 using NG.Common.Library.Exceptions;
 using NG.Common.Services.AuthorizationProvider;
+using NG.Common.Services.Token;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
 using NG.DBManager.Infrastructure.Impl.EF.IoCModule;
 using NG.DBManager.Infrastructure.Impl.EF.UnitsOfWork;
@@ -17,7 +18,7 @@ namespace NG.Auth.Business.Impl.IoCModule
     {
         public static IServiceCollection AddBusinessServices(
            this IServiceCollection services,
-           Microsoft.Extensions.Configuration.IConfiguration configuration)
+           IConfiguration configuration)
         {
             if (services == null)
             {
@@ -26,6 +27,7 @@ namespace NG.Auth.Business.Impl.IoCModule
 
             services.AddInfrastructureServices()
                     .AddSingleton<IPasswordHasher, PasswordHasher>()
+                    .AddSingleton<ITokenService, TokenService>()
                     .AddScoped<IAuthorizationProvider, AuthorizationProvider>()
                     .AddScoped<IAuthUnitOfWork, AuthUnitOfWork>()
                     .AddScoped<IUserService, UserService>()
