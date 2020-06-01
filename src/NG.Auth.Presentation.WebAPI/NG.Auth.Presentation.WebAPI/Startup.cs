@@ -29,8 +29,6 @@ namespace NG.Auth.Presentation.WebAPI
 
             services.AddControllers();
 
-            services.Configure<IConfiguration>(Configuration);
-
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             services.AddSwaggerDocumentation(Configuration.GetSection("Documentation"), xmlFile);
 

@@ -9,9 +9,6 @@ using System.Threading.Tasks;
 
 namespace NG.Auth.Presentation.WebAPI.Controllers
 {
-    /// <summary>
-    /// UserController class.
-    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
@@ -19,9 +16,6 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
 
-        /// <summary>
-        /// UserController constructor.
-        /// </summary>
         public UserController(
             IUserService userService,
             ILogger<UserController> logger)
