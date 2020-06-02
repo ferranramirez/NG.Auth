@@ -1,0 +1,43 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-18.04'
+
+steps: 
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Build.StagingDirectory)'
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '**'
+    TargetFolder: '$(Build.StagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+
+- task: DockerCompose@0
+  displayName: 'Docker Build'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryEndpoint: 'docker-hub/ferranramirez'
+    dockerComposeFile: '**/docker-compose.yml'
+    dockerComposeFileArgs: |
+      PAT=$(PAT)
+      ASPNETCORE_ENVIRONMENT=$(ASPNETCORE_ENVIRONMENT)
+    action: 'Build services'
+    includeLatestTag: true
+
+- task: DockerCompose@0
+  displayName: 'Docker Push'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    dockerRegistryEndpoint: 'docker-hub/ferranramirez'
+    dockerComposeFileArgs: |
+     PAT=$(PAT)
+    action: 'Push services'
+    additionalImageTags: '$(Build.BuildNumber)'
+    includeLatestTag: true
