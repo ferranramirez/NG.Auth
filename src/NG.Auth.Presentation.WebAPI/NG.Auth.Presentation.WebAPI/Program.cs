@@ -22,7 +22,7 @@ namespace NG.Auth.Presentation.WebAPI
                    .ReadFrom.Configuration(Configuration)
                    .Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))
                    .WriteTo.File(new JsonFormatter(), @"c:\temp\logs\Auth.json", shared: false)
-                   .WriteTo.Elasticsearch(Environment.GetEnvironmentVariable("ELASTIC_URL") ?? "#{ELASTIC_URL}#")
+                   .WriteTo.Elasticsearch(Environment.GetEnvironmentVariable("ELASTIC_URL") ?? "localhost:9200")
                    .CreateLogger();
 
             try
