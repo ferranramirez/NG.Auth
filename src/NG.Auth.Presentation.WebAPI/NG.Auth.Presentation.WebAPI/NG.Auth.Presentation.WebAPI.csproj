@@ -24,19 +24,11 @@
     <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.1.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="NG.Common.Library">
-      <HintPath>..\..\..\..\NG.Common\src\NG.Common.Library\bin\Debug\netcoreapp3.1\NG.Common.Library.dll</HintPath>
-    </Reference>
-    <Reference Include="NG.Common.Services">
-      <HintPath>..\..\..\..\NG.Common\src\NG.Common.Services\bin\Debug\netcoreapp3.1\NG.Common.Services.dll</HintPath>
-    </Reference>
-    <Reference Include="NG.DBManager.Infrastructure.Contracts">
-      <HintPath>..\..\..\..\NG.DBManager\src\NG.DBManager.Infrastructure.Impl.EF\bin\Debug\netcoreapp3.1\NG.DBManager.Infrastructure.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="NG.DBManager.Infrastructure.Impl.EF">
-      <HintPath>..\..\..\..\NG.DBManager\src\NG.DBManager.Infrastructure.Impl.EF\bin\Debug\netcoreapp3.1\NG.DBManager.Infrastructure.Impl.EF.dll</HintPath>
-    </Reference>
+  <ItemGroup Label="NotGuiri Nuget">
+    <PackageReference Include="NG.Common.Library" Version="1.0.0" />
+    <PackageReference Include="NG.Common.Services" Version="1.0.0" />
+    <PackageReference Include="NG.DBManager.Infrastructure.Contracts" Version="1.0.0" />
+    <PackageReference Include="NG.DBManager.Infrastructure.Impl.EF" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
