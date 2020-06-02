@@ -30,14 +30,3 @@ steps:
       ASPNETCORE_ENVIRONMENT=$(ASPNETCORE_ENVIRONMENT)
     action: 'Build services'
     includeLatestTag: true
-
-- task: DockerCompose@0
-  displayName: 'Docker Push'
-  inputs:
-    containerregistrytype: 'Container Registry'
-    dockerRegistryEndpoint: 'docker-hub/ferranramirez'
-    dockerComposeFileArgs: |
-     PAT=$(PAT)
-    action: 'Push services'
-    additionalImageTags: '$(Build.BuildNumber)'
-    includeLatestTag: true
