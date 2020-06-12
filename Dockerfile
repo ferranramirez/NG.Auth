@@ -1,8 +1,7 @@
 # Build image stage
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build-stage
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
 RUN apk update && apk add bash && apk add curl
-# Label defined to prune the image created during this stage by using the command: $ docker image prune --filter label=stage=build
-LABEL stage=build
+
 WORKDIR /api
 
 # nuget restore
@@ -16,15 +15,19 @@ ENV DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER 0
 COPY . .
 RUN dotnet restore -s "https://pkgs.dev.azure.com/ntguiri/_packaging/ntguiri/nuget/v3/index.json" -s "https://api.nuget.org/v3/index.json"  "NG.Auth.sln"
 
-# dotnet build and publish
+# dotnet build and test
 RUN dotnet build -c Release --no-restore
-RUN dotnet test --filter FullyQualifiedName~UnitTest -c Release --no-build --no-restore
+RUN dotnet test --filter FullyQualifiedName~UnitTest -c Release --logger "trx;LogFileName=result.trx" --no-build --no-restore
+
+
+FROM build AS publish 
+# dotnet publish
 RUN dotnet publish -c Release --no-build -o /publish
 
 # Runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /publish
 
-COPY --from=build-stage /publish .
+COPY --from=publish /publish .
 
 ENTRYPOINT ["dotnet", "NG.Auth.Presentation.WebAPI.dll"]

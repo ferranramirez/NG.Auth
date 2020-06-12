@@ -6,7 +6,7 @@ pool:
 
 steps:
 - task: replacetokens@3
-  displayName: 'Replace tokens'
+  displayName: 'Replace tokens appsettings'
   inputs:
     rootDirectory: '$(System.DefaultWorkingDirectory)'
     targetFiles: '**/appsettings.*.json'
@@ -14,9 +14,17 @@ steps:
     writeBOM: true
     actionOnMissing: 'warn'
     keepToken: false
-    tokenPrefix: '#{'
-    tokenSuffix: '}#'
-    useLegacyPattern: false
+    enableTelemetry: false
+
+- task: replacetokens@3
+  displayName: 'Replace tokens docker-deploy.yml'
+  inputs:
+    rootDirectory: '$(System.DefaultWorkingDirectory)'
+    targetFiles: '**/docker-deploy.yml'
+    encoding: 'auto'
+    writeBOM: true
+    actionOnMissing: 'warn'
+    keepToken: false
     enableTelemetry: false
 - task: PublishBuildArtifacts@1
   displayName: 'Publish docker-deploy.yml'
@@ -34,6 +42,23 @@ steps:
     tags: '$(Build.SourceBranchName)'
     arguments: '--build-arg PAT=$(PAT)'
     addPipelineData: false
+
+- task: Bash@3
+  displayName: 'Copy TestResults out of Docker'
+  inputs:
+    targetType: 'inline'
+    script: |
+      docker create -ti --name testcontainer registry.gitlab.com/notguiri/$(projectName):$(Build.SourceBranchName)
+      docker cp testcontainer:/tst/NG.Auth.Test.UnitTest/TestResults/ $(Build.ArtifactStagingDirectory)/TestResults
+      docker rm -fv testcontainer
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results'
+  inputs:
+    testResultsFormat: 'XUnit'
+    testResultsFiles: '*.trx'
+    searchFolder: '$(Build.ArtifactStagingDirectory)/TestResults'
+
+
 - task: Docker@2
   displayName: 'Docker Push'
   inputs:

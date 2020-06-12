@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   auth:
-    image: registry.gitlab.com/notguiri/auth:master
+    image: registry.gitlab.com/notguiri/auth:#{IMG_TAG}#
     deploy:
       # replicas: 2
       restart_policy:
