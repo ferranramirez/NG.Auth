@@ -26,6 +26,7 @@ namespace NG.Auth.Presentation.WebAPI
             {
                 options.Filters.Add(typeof(ApiExceptionFilter));
             });
+            services.AddHealthChecks();
 
             services.AddControllers();
 
@@ -41,6 +42,7 @@ namespace NG.Auth.Presentation.WebAPI
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseErrorDisplayMiddleware();
+            app.UseHealthChecks("/health");
 
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 

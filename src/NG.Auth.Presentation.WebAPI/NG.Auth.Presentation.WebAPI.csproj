@@ -31,4 +31,8 @@
     <ProjectReference Include="..\NG.Auth.Business.Impl\NG.Auth.Business.Impl.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middleware\" />
+  </ItemGroup>
+
 </Project>

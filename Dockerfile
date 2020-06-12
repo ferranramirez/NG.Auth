@@ -18,6 +18,7 @@ RUN dotnet restore -s "https://pkgs.dev.azure.com/ntguiri/_packaging/ntguiri/nug
 
 # dotnet build and publish
 RUN dotnet build -c Release --no-restore
+RUN dotnet test --filter FullyQualifiedName~UnitTest -c Release --no-build --no-restore
 RUN dotnet publish -c Release --no-build -o /publish
 
 # Runtime image
