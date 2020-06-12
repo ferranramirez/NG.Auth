@@ -22,8 +22,6 @@ namespace NG.Auth.Test.UnitTest
         private readonly Mock<IAuthorizationProvider> _authorizationProviderMock;
         private readonly Mock<IPasswordHasher> _passwordHasherMock;
         private readonly NullLogger<UserService> _nullLogger;
-        private readonly Dictionary<BusinessErrorType, BusinessErrorObject> _errorsMock;
-        private readonly IOptions<Dictionary<BusinessErrorType, BusinessErrorObject>> _errorsMock2;
         private readonly IUserService _userService;
         private readonly User user;
         private readonly AuthorizedUser authUser;

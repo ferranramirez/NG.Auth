@@ -4,29 +4,41 @@ trigger:
 pool:
   vmImage: 'ubuntu-18.04'
 
-steps: 
-- task: CopyFiles@2
-  displayName: 'Copy Files to: $(Build.StagingDirectory)'
+steps:
+- task: replacetokens@3
+  displayName: 'Replace tokens'
   inputs:
-    SourceFolder: '$(Build.SourcesDirectory)'
-    Contents: '**'
-    TargetFolder: '$(Build.StagingDirectory)'
-
+    rootDirectory: '$(System.DefaultWorkingDirectory)'
+    targetFiles: '**/appsettings.*.json'
+    encoding: 'auto'
+    writeBOM: true
+    actionOnMissing: 'warn'
+    keepToken: false
+    tokenPrefix: '#{'
+    tokenSuffix: '}#'
+    useLegacyPattern: false
+    enableTelemetry: false
 - task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: drop'
+  displayName: 'Publish docker-deploy.yml'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: 'docker-deploy.yml'
     ArtifactName: 'drop'
     publishLocation: 'Container'
-
-- task: DockerCompose@0
+- task: Docker@2
   displayName: 'Docker Build'
   inputs:
-    containerregistrytype: 'Container Registry'
-    dockerRegistryEndpoint: 'docker-hub/ferranramirez'
-    dockerComposeFile: '**/docker-compose.yml'
-    dockerComposeFileArgs: |
-      PAT=$(PAT)
-      ASPNETCORE_ENVIRONMENT=$(ASPNETCORE_ENVIRONMENT)
-    action: 'Build services'
-    includeLatestTag: true
+    containerRegistry: 'GitLabRegistry/ferranramirez'
+    repository: 'notguiri/$(projectName)'
+    command: 'build'
+    Dockerfile: '**/Dockerfile'
+    tags: '$(Build.SourceBranchName)'
+    arguments: '--build-arg PAT=$(PAT)'
+    addPipelineData: false
+- task: Docker@2
+  displayName: 'Docker Push'
+  inputs:
+    containerRegistry: 'GitLabRegistry/ferranramirez'
+    repository: 'notguiri/$(projectName)'
+    command: 'push'
+    tags: '$(Build.SourceBranchName)'
+    addPipelineData: false

@@ -5,11 +5,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\NG.Auth.Business.Contract\NG.Auth.Business.Contract.csproj" />
-    <ProjectReference Include="..\..\NG.Auth.Business.Impl\NG.Auth.Business.Impl.csproj" />
-  </ItemGroup>
-
   <ItemGroup Label="Startup">
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
@@ -29,6 +24,11 @@
     <PackageReference Include="NG.Common.Services" Version="1.0.0" />
     <PackageReference Include="NG.DBManager.Infrastructure.Contracts" Version="1.0.0" />
     <PackageReference Include="NG.DBManager.Infrastructure.Impl.EF" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NG.Auth.Business.Contract\NG.Auth.Business.Contract.csproj" />
+    <ProjectReference Include="..\NG.Auth.Business.Impl\NG.Auth.Business.Impl.csproj" />
   </ItemGroup>
 
 </Project>

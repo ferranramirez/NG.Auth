@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  auth:
+    image: registry.gitlab.com/notguiri/auth:master
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    ports: 
+      - "8082:80"
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true
+
