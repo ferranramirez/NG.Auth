@@ -18,6 +18,10 @@ steps:
     tokenSuffix: '}#'
     useLegacyPattern: false
     enableTelemetry: false
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**/*.UnitTest.csproj'
 - task: PublishBuildArtifacts@1
   displayName: 'Publish docker-deploy.yml'
   inputs:
