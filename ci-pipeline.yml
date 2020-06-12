@@ -19,12 +19,14 @@ steps:
     useLegacyPattern: false
     enableTelemetry: false
 - task: DotNetCoreCLI@2
+  displayName: 'Restore'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
     feedsToUse: 'select'
     vstsFeed: 'd73bd4e5-9a0c-45fc-ae19-1c2a40bfc9ee'
 - task: DotNetCoreCLI@2
+  displayName: 'Unit Tests'
   inputs:
     command: 'test'
     projects: '**/*.UnitTest.csproj'
