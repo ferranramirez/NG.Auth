@@ -17,7 +17,7 @@ RUN dotnet restore -s "https://pkgs.dev.azure.com/ntguiri/_packaging/ntguiri/nug
 
 # dotnet build and test
 RUN dotnet build -c Release --no-restore
-RUN dotnet test /api/tst/NG.Auth.Test.UnitTest/NG.Auth.Test.UnitTest.csproj -c Release --logger "trx;LogFileName=result.xml" --no-build --no-restore -r /publish/test
+RUN dotnet test /api/tst/NG.Auth.Test.UnitTest/NG.Auth.Test.UnitTest.csproj -c Release --logger "trx;LogFileName=result.trx" --no-build --no-restore -r /publish/test
 # dotnet publish
 RUN dotnet publish -c Release --no-build -o /publish
 
