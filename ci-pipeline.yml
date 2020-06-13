@@ -49,7 +49,7 @@ steps:
     targetType: 'inline'
     script: |
       docker create -ti --name testcontainer registry.gitlab.com/notguiri/$(projectName):$(Build.SourceBranchName)
-      docker cp testcontainer:/tst/NG.Auth.Test.UnitTest/TestResults/ $(Build.ArtifactStagingDirectory)/TestResults
+      docker cp testcontainer:/publish/test $(Build.ArtifactStagingDirectory)/TestResults
       docker rm -fv testcontainer
 - task: PublishTestResults@2
   displayName: 'Publish Test Results'
