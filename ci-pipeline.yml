@@ -16,6 +16,16 @@ steps:
     keepToken: false
     enableTelemetry: false
 
+- task: Bash@3
+  displayName: 'Build and Run Unit Tests'
+  inputs:
+    targetType: 'inline'
+    script: |
+      docker build -f ./Dockerfile --target build -t webapplication1:$(build.buildid) . 
+      docker create -ti --name testcontainer webapplication1:$(build.buildid) 
+      docker cp testcontainer:/src/WebApplication1.UnitTests/TestResults/ $(Build.ArtifactStagingDirectory)/testresults 
+      docker rm -fv testcontainer
+
 - task: replacetokens@3
   displayName: 'Replace tokens docker-deploy.yml'
   inputs:
