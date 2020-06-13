@@ -51,26 +51,12 @@ steps:
       docker create -ti --name testcontainer registry.gitlab.com/notguiri/$(projectName):$(Build.SourceBranchName)
       docker cp testcontainer:/publish/test $(Build.ArtifactStagingDirectory)/TestResults
       docker rm -fv testcontainer
-      echo 'ls'
-      ls
-      echo 'cd directory'
-      cd $(Build.ArtifactStagingDirectory)/TestResults
-      echo 'ls'
-      ls
-- task: PublishTestResults@2
-  displayName: 'Publish Test Results'
-  inputs:
-    testResultsFormat: 'XUnit'
-    testResultsFiles: '*.trx'
-    searchFolder: '$(Build.ArtifactStagingDirectory)/TestResults'
 
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'VSTest'
     testResultsFiles: 'result.trx'
     searchFolder: '$(Build.ArtifactStagingDirectory)/TestResults'
-
-
 - task: Docker@2
   displayName: 'Docker Push'
   inputs:
