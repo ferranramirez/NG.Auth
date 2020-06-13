@@ -26,7 +26,8 @@ namespace NG.Auth.Presentation.WebAPI
             {
                 options.Filters.Add(typeof(ApiExceptionFilter));
             });
-            services.AddHealthChecks();
+
+            services.AddHealthCheckMiddleware(Configuration);
 
             services.AddControllers();
 
@@ -41,10 +42,11 @@ namespace NG.Auth.Presentation.WebAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseErrorDisplayMiddleware();
-            app.UseHealthChecks("/health");
-
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+
+            app.UseErrorDisplayMiddleware();
+
+            app.UseHealthCheckMiddleware();
 
             app.UseHttpsRedirection();
 
