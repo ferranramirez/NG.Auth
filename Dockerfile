@@ -27,4 +27,6 @@ WORKDIR /publish
 
 COPY --from=build /publish .
 
+HEALTHCHECK CMD curl --silent --fail localhost:80/health || echo 1
+
 ENTRYPOINT ["dotnet", "NG.Auth.Presentation.WebAPI.dll"]

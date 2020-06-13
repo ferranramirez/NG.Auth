@@ -53,6 +53,7 @@ steps:
       docker rm -fv testcontainer
 
 - task: PublishTestResults@2
+  displayName: 'Publish TestResults'
   inputs:
     testResultsFormat: 'VSTest'
     testResultsFiles: 'result.trx'
