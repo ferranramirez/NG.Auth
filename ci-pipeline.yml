@@ -76,7 +76,7 @@ steps:
 
 - task: PublishTestResults@2
   inputs:
-    testResultsFormat: 'JUnit'
+    testResultsFormat: 'VSTest'
     testResultsFiles: 'result.trx'
     searchFolder: '$(Build.ArtifactStagingDirectory)/TestResults'
 
