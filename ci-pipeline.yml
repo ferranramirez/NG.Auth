@@ -61,13 +61,13 @@ steps:
   displayName: 'Publish Test Results'
   inputs:
     testResultsFormat: 'XUnit'
-    testResultsFiles: '*.xml'
+    testResultsFiles: '*.trx'
     searchFolder: '$(Build.ArtifactStagingDirectory)/TestResults'
 
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'VSTest'
-    testResultsFiles: 'result.xml'
+    testResultsFiles: 'result.trx'
     searchFolder: '$(Build.ArtifactStagingDirectory)/TestResults'
 
 
