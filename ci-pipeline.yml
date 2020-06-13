@@ -16,15 +16,15 @@ steps:
     keepToken: false
     enableTelemetry: false
 
-- task: Bash@3
-  displayName: 'Build and Run Unit Tests'
-  inputs:
-    targetType: 'inline'
-    script: |
-      docker build -f ./Dockerfile --target build -t webapplication1:$(build.buildid) . 
-      docker create -ti --name testcontainer webapplication1:$(build.buildid) 
-      docker cp testcontainer:/src/WebApplication1.UnitTests/TestResults/ $(Build.ArtifactStagingDirectory)/testresults 
-      docker rm -fv testcontainer
+# - task: Bash@3
+#   displayName: 'Build and Run Unit Tests'
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       docker build -f ./Dockerfile --target build -t webapplication1:$(build.buildid) . 
+#       docker create -ti --name testcontainer webapplication1:$(build.buildid) 
+#       docker cp testcontainer:/src/WebApplication1.UnitTests/TestResults/ $(Build.ArtifactStagingDirectory)/testresults 
+#       docker rm -fv testcontainer
 
 - task: replacetokens@3
   displayName: 'Replace tokens docker-deploy.yml'
@@ -58,8 +58,15 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
+      echo 'docker images'
+      docker images
+      echo 'docker ps'
+      docker ps
+      echo 'docker create'
       docker create -ti --name testcontainer registry.gitlab.com/notguiri/$(projectName):$(Build.SourceBranchName)
-      docker cp testcontainer:api/tst/NG.Auth.Test.UnitTest/TestResults/ $(Build.ArtifactStagingDirectory)/TestResults
+      echo 'docker cp'
+      docker cp testcontainer:/api/tst/NG.Auth.Test.UnitTest/TestResults/ $(Build.ArtifactStagingDirectory)/TestResults
+      echo 'docker rm'
       docker rm -fv testcontainer
 - task: PublishTestResults@2
   displayName: 'Publish Test Results'
