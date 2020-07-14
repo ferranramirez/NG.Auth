@@ -20,11 +20,12 @@ namespace NG.Auth.Test.UnitTest
     {
         private readonly Mock<IAuthUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IAuthorizationProvider> _authorizationProviderMock;
+        private readonly Mock<ITokenHandler> _tokenHandlerMock;
         private readonly Mock<IPasswordHasher> _passwordHasherMock;
         private readonly NullLogger<UserService> _nullLogger;
         private readonly IUserService _userService;
         private readonly User expected;
-        private readonly UserDto userDto;
+        private readonly RegisterRequest userDto;
         private readonly string hashedPassword;
 
         public UserServiceRegisterTests()
@@ -37,7 +38,7 @@ namespace NG.Auth.Test.UnitTest
                 Password = "secret123",
             };
 
-            userDto = new UserDto
+            userDto = new RegisterRequest
             {
                 Name = "Test",
                 Email = "basic@test.org",
@@ -49,6 +50,7 @@ namespace NG.Auth.Test.UnitTest
             _unitOfWorkMock = new Mock<IAuthUnitOfWork>();
             _passwordHasherMock = new Mock<IPasswordHasher>();
             _authorizationProviderMock = new Mock<IAuthorizationProvider>();
+            _tokenHandlerMock = new Mock<ITokenHandler>();
             _nullLogger = new NullLogger<UserService>();
 
             var errorsDictionary = new Dictionary<BusinessErrorType, BusinessErrorObject>
@@ -58,7 +60,8 @@ namespace NG.Auth.Test.UnitTest
             };
             var _options = Options.Create(errorsDictionary);
 
-            _userService = new UserService(_unitOfWorkMock.Object, _passwordHasherMock.Object, _authorizationProviderMock.Object, _nullLogger, _options);
+            _userService = new UserService(_unitOfWorkMock.Object, _passwordHasherMock.Object,
+                _authorizationProviderMock.Object, _tokenHandlerMock.Object, _nullLogger, _options);
         }
 
         [Fact(Skip = "Cannot know the Id of the mapped user when the mapping is done in the business layer")]

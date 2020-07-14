@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NG.Auth.Business.Contract;
 using NG.Auth.Domain;
 using NG.Common.Library.Filters;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -40,11 +42,10 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Register([FromQuery] UserDto userDto)
+        public async Task<IActionResult> Register(RegisterRequest userDto)
         {
             return Ok(await _userService.RegisterAsync(userDto));
         }
-
 
         /// <summary>
         /// Generate a token for the given User
@@ -57,15 +58,50 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         /// - 500 - An internal server error. Something bad and unexpected happened.
         /// - 543 - A handled error. This error was expected, check the message.
         /// </remarks>
-        /// <returns></returns>
-        [HttpPost("Login")]
+        [HttpPost("Authenticate")]
         [ProducesResponseType(typeof(ApiError), 543)]
         [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        public IActionResult Login(Credentials credentials)
+        [ProducesResponseType(typeof(AuthenticationResponse), (int)HttpStatusCode.OK)]
+        public IActionResult Authenticate(AuthenticationRequest credentials)
         {
-            return Ok(_userService.Authenticate(credentials));
+            var authenticationResponse = _userService.Authenticate(credentials);
+
+            SetTokenCookie(authenticationResponse.RefreshToken);
+
+            return Ok(authenticationResponse);
+        }
+
+        /// <summary>
+        /// Give a new token
+        /// </summary>
+        /// <remarks>
+        /// ## Response code meanings
+        /// - 200 - Token succesfully created.
+        /// - 400 - The model is not properly built.
+        /// - 500 - An internal server error. Something bad and unexpected happened.
+        /// - 543 - A handled error. This error was expected, check the message.
+        /// </remarks>
+        [HttpPost("RefreshToken")]
+        public IActionResult RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            var authenticationResponse = _userService.RefreshToken(refreshToken);
+
+            SetTokenCookie(authenticationResponse.RefreshToken);
+
+            return Ok(authenticationResponse);
+        }
+
+        private void SetTokenCookie(string token)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+            Response.Cookies.Append("refreshToken", token, cookieOptions);
         }
     }
 }

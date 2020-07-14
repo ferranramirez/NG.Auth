@@ -21,11 +21,12 @@ namespace NG.Auth.Test.UnitTest
         private readonly Mock<IAuthUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IAuthorizationProvider> _authorizationProviderMock;
         private readonly Mock<IPasswordHasher> _passwordHasherMock;
+        private readonly Mock<ITokenHandler> _tokenHandlerMock;
         private readonly NullLogger<UserService> _nullLogger;
         private readonly IUserService _userService;
         private readonly User user;
         private readonly AuthorizedUser authUser;
-        private readonly string expected;
+        private readonly AuthenticationResponse expected;
 
         public UserServiceAuthenticateTests()
         {
@@ -33,7 +34,9 @@ namespace NG.Auth.Test.UnitTest
 
             authUser = new AuthorizedUser(userId, "basic@test.org", "Basic");
 
-            expected = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJiYXNpY0B0ZXN0Lm9yZyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJCYXNpYyJ9.JFy76_gBh - i3NFBa2xO_k - h3k8ygqFlv1Qos94xvKvM";
+            expected = new AuthenticationResponse(
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJiYXNpY0B0ZXN0Lm9yZyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJCYXNpYyJ9.JFy76_gBh - i3NFBa2xO_k - h3k8ygqFlv1Qos94xvKvM",
+                "refreshToken");
 
             user = new User
             {
@@ -47,31 +50,34 @@ namespace NG.Auth.Test.UnitTest
             _unitOfWorkMock = new Mock<IAuthUnitOfWork>();
             _passwordHasherMock = new Mock<IPasswordHasher>();
             _authorizationProviderMock = new Mock<IAuthorizationProvider>();
+            _tokenHandlerMock = new Mock<ITokenHandler>();
             _nullLogger = new NullLogger<UserService>();
 
             var errorsDictionary = new Dictionary<BusinessErrorType, BusinessErrorObject>
             {
                 { BusinessErrorType.UserNotFound, new BusinessErrorObject() { ErrorCode = 101, Message = "Error test" } },
-                { BusinessErrorType.WrongPassword, new BusinessErrorObject() { ErrorCode = 102, Message = "Error test" } }
+                { BusinessErrorType.WrongPassword, new BusinessErrorObject() { ErrorCode = 102, Message = "Error test" } },
+                { BusinessErrorType.WrongToken, new BusinessErrorObject() { ErrorCode = 103, Message = "Error test" } }
             };
             var _options = Options.Create(errorsDictionary);
 
-            _userService = new UserService(_unitOfWorkMock.Object, _passwordHasherMock.Object, _authorizationProviderMock.Object, _nullLogger, _options);
+            _userService = new UserService(_unitOfWorkMock.Object, _passwordHasherMock.Object,
+                _authorizationProviderMock.Object, _tokenHandlerMock.Object, _nullLogger, _options);
         }
 
         [Fact]
         public void UserService_AuthenticateUser_ReturnsRightToken()
         {
             // Arrange
-            _unitOfWorkMock.Setup(uow => uow.User.GetByEmail("basic@test.org")).Returns(user);
-            _passwordHasherMock.Setup(pwdH => pwdH.Check("secret123", "secret123")).Returns((true, false));
-            _authorizationProviderMock.Setup(authP => authP.GetToken(authUser)).Returns(expected);
-
-            Credentials credentials = new Credentials()
+            AuthenticationRequest credentials = new AuthenticationRequest()
             {
                 EmailAddress = "basic@test.org",
                 Password = "secret123"
             };
+            _tokenHandlerMock.Setup(tknH => tknH.GetUser(credentials)).Returns(user);
+            _passwordHasherMock.Setup(pwdH => pwdH.Check("secret123", "secret123")).Returns((true, false));
+            _authorizationProviderMock.Setup(authP => authP.GetToken(authUser)).Returns(expected.AccessToken);
+            _tokenHandlerMock.Setup(tknH => tknH.GenerateRefreshToken(authUser)).Returns(expected.RefreshToken);
 
             // Act
             var actual = _userService.Authenticate(credentials);
@@ -84,14 +90,13 @@ namespace NG.Auth.Test.UnitTest
         public void UserService_AuthenticateUserwithWrongEmail_ThrowsCustomException()
         {
             // Arrange
-            _unitOfWorkMock.Setup(uow => uow.User.GetByEmail("WRONG_basic@test.org")).Returns((User)null);
-            //_errorsMock.Setup(errors => errors.Value[0].ErrorCode).Returns(101);
-
-            Credentials credentials = new Credentials()
+            AuthenticationRequest credentials = new AuthenticationRequest()
             {
                 EmailAddress = "WRONG_basic@test.org",
                 Password = "secret123"
             };
+            _tokenHandlerMock.Setup(tknH => tknH.GetUser(credentials)).Returns((User)null);
+            //_errorsMock.Setup(errors => errors.Value[0].ErrorCode).Returns(101);
 
             // Act
             Action action = () => _userService.Authenticate(credentials);
@@ -105,13 +110,12 @@ namespace NG.Auth.Test.UnitTest
         public void UserService_AuthenticateUserwithWrongPassword_ThrowsCustomException()
         {
             // Arrange
-            _unitOfWorkMock.Setup(uow => uow.User.GetByEmail("basic@test.org")).Returns(user);
-
-            Credentials credentials = new Credentials()
+            AuthenticationRequest credentials = new AuthenticationRequest()
             {
                 EmailAddress = "basic@test.org",
                 Password = "WRONG_secret123"
             };
+            _tokenHandlerMock.Setup(tknH => tknH.GetUser(credentials)).Returns(user);
 
             // Act
             Action action = () => _userService.Authenticate(credentials);

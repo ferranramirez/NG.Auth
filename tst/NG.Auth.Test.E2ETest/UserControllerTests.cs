@@ -28,7 +28,7 @@ namespace NG.Auth.Test.E2ETest
         public async Task GetRequestToAuthorizedUser_ShouldReturnUserAsJson()
         {
             // Arrange
-            Credentials credentials = new Credentials()
+            AuthenticationRequest credentials = new AuthenticationRequest()
             {
                 EmailAddress = "basic@test.org",
                 Password = "basicPassword123"
@@ -41,7 +41,7 @@ namespace NG.Auth.Test.E2ETest
             var stringContent = new StringContent(credentialsJson, Encoding.UTF8, "application/json");
 
             // Act
-            var httpResponse = await client.PostAsync("/User/Login", stringContent);
+            var httpResponse = await client.PostAsync("/User/Authenticate", stringContent);
 
             // Assert
             httpResponse.EnsureSuccessStatusCode();

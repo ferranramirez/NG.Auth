@@ -10,7 +10,6 @@ using NG.DBManager.Infrastructure.Contracts.Models.Enums;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace NG.Auth.Business.Impl
@@ -20,6 +19,7 @@ namespace NG.Auth.Business.Impl
         private readonly IAuthUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IAuthorizationProvider _authorizationProvider;
+        private readonly ITokenHandler _tokenHandler;
         private readonly ILogger<UserService> _logger;
         private readonly Dictionary<BusinessErrorType, BusinessErrorObject> _errors;
 
@@ -27,27 +27,29 @@ namespace NG.Auth.Business.Impl
             IAuthUnitOfWork unitOfWork,
             IPasswordHasher passwordHasher,
             IAuthorizationProvider authorizationProvider,
+            ITokenHandler tokenHandler,
             ILogger<UserService> logger,
             IOptions<Dictionary<BusinessErrorType, BusinessErrorObject>> errors)
         {
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
             _authorizationProvider = authorizationProvider;
+            _tokenHandler = tokenHandler;
             _logger = logger;
             _errors = errors.Value;
         }
 
-        public async Task<User> RegisterAsync(UserDto userDto)
+        public async Task<User> RegisterAsync(RegisterRequest registerRequest)
         {
             User user = new User()
             {
                 Id = Guid.NewGuid(),
-                Name = userDto.Name,
-                Surname = userDto.Surname,
-                Birthdate = userDto.Birthdate,
-                PhoneNumber = userDto.PhoneNumber,
-                Email = userDto.Email,
-                Password = _passwordHasher.Hash(userDto.Password),
+                Name = registerRequest.Name,
+                Surname = registerRequest.Surname,
+                Birthdate = registerRequest.Birthdate,
+                PhoneNumber = registerRequest.PhoneNumber,
+                Email = registerRequest.Email,
+                Password = _passwordHasher.Hash(registerRequest.Password),
                 Role = Role.Basic,
                 Image = null,
             };
@@ -57,9 +59,9 @@ namespace NG.Auth.Business.Impl
             return _unitOfWork.User.Get(user.Id);
         }
 
-        public string Authenticate(Credentials credentials)
+        public AuthenticationResponse Authenticate(AuthenticationRequest credentials)
         {
-            User user = GetUser(credentials);
+            User user = _tokenHandler.GetUser(credentials);
 
             if (user == null)
             {
@@ -77,22 +79,22 @@ namespace NG.Auth.Business.Impl
 
             AuthorizedUser authUser = new AuthorizedUser(user.Id, user.Email, user.Role.ToString());
 
-            return _authorizationProvider.GetToken(authUser);
+            return new AuthenticationResponse(
+                _authorizationProvider.GetToken(authUser),
+                _tokenHandler.GenerateRefreshToken(authUser));
         }
 
-        private User GetUser(Credentials credentials)
+        public AuthenticationResponse RefreshToken(string refreshToken)
         {
-            if (string.IsNullOrEmpty(credentials.PhoneNumber))
+            var authenticationResponse = _tokenHandler.Authenticate(refreshToken);
+
+            if (authenticationResponse == null)
             {
-                return _unitOfWork.User
-                    .GetByEmail(credentials.EmailAddress);
+                var error = _errors[BusinessErrorType.WrongToken];
+                throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
             }
-            else
-            {
-                return _unitOfWork.User
-                   .Find(u => u.PhoneNumber == credentials.PhoneNumber)
-                   .SingleOrDefault();
-            }
+
+            return authenticationResponse;
         }
     }
 }
