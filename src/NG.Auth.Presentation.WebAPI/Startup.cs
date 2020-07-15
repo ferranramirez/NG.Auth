@@ -37,7 +37,9 @@ namespace NG.Auth.Presentation.WebAPI
             services.AddJwtAuthentication(Configuration.GetSection("Secrets"));
 
             services.AddDistributedRedisCache(option =>
-                option.Configuration = Configuration.GetSection("Urls").GetValue<string>("Redis"));
+            {
+                option.Configuration = Configuration.GetConnectionString("Redis");
+            });
 
             services.AddBusinessServices(Configuration);
         }
