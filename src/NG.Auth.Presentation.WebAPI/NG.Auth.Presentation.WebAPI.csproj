@@ -25,8 +25,8 @@
   </ItemGroup>
 
   <ItemGroup Label="NotGuiri Nuget">
-    <PackageReference Include="NG.Common.Library" Version="1.0.6" />
-    <PackageReference Include="NG.Common.Services" Version="1.0.6" />
+    <PackageReference Include="NG.Common.Library" Version="1.0.7" />
+    <PackageReference Include="NG.Common.Services" Version="1.0.7" />
     <PackageReference Include="NG.DBManager.Infrastructure.Contracts" Version="1.0.5" />
     <PackageReference Include="NG.DBManager.Infrastructure.Impl.EF" Version="1.0.5" />
   </ItemGroup>
