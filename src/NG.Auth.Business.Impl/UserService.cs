@@ -39,7 +39,7 @@ namespace NG.Auth.Business.Impl
             _errors = errors.Value;
         }
 
-        public async Task<User> RegisterAsync(RegisterRequest registerRequest)
+        public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest registerRequest)
         {
             User user = new User()
             {
@@ -56,7 +56,8 @@ namespace NG.Auth.Business.Impl
 
             _unitOfWork.User.Add(user);
             await _unitOfWork.CommitAsync();
-            return _unitOfWork.User.Get(user.Id);
+
+            return GetAuthenticationResponse(user);
         }
 
         public AuthenticationResponse Authenticate(AuthenticationRequest credentials)
@@ -77,6 +78,11 @@ namespace NG.Auth.Business.Impl
                 throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
             }
 
+            return GetAuthenticationResponse(user);
+        }
+
+        private AuthenticationResponse GetAuthenticationResponse(User user)
+        {
             AuthorizedUser authUser = new AuthorizedUser(user.Id, user.Email, user.Role.ToString());
 
             return new AuthenticationResponse(

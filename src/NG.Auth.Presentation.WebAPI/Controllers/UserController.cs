@@ -41,7 +41,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiError), 543)]
         [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(AuthenticationResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Register(RegisterRequest userDto)
         {
             return Ok(await _userService.RegisterAsync(userDto));

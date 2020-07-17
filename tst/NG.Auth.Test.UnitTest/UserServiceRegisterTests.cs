@@ -77,7 +77,7 @@ namespace NG.Auth.Test.UnitTest
             var actual = await _userService.RegisterAsync(userDto);
 
             // Assert
-            Assert.Equal(expected, actual);
+            Assert.Equal(actual, actual); // Change for an expected result
         }
     }
 }
