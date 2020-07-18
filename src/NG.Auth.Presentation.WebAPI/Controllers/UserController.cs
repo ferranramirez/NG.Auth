@@ -67,7 +67,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         {
             var authenticationResponse = _userService.Authenticate(credentials);
 
-            SetTokenCookie(authenticationResponse.RefreshToken);
+            // SetTokenCookie(authenticationResponse.RefreshToken);
 
             return Ok(authenticationResponse);
         }
@@ -85,11 +85,12 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         [HttpPost("RefreshToken")]
         public IActionResult RefreshToken()
         {
-            var refreshToken = Request.Cookies["refreshToken"];
+            // var refreshToken = Request.Cookies["refreshToken"];
+            var refreshToken = Request.Headers["refreshToken"];
 
             var authenticationResponse = _userService.RefreshToken(refreshToken);
 
-            SetTokenCookie(authenticationResponse.RefreshToken);
+            // SetTokenCookie(authenticationResponse.RefreshToken);
 
             return Ok(authenticationResponse);
         }
