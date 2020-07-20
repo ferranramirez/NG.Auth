@@ -8,9 +8,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
   </ItemGroup>
 
-
   <ItemGroup Label="NotGuiri Nuget">
-    <PackageReference Include="NG.DBManager.Infrastructure.Impl.EF" Version="1.0.0" />
+    <PackageReference Include="NG.DBManager.Infrastructure.Impl.EF" Version="1.0.7" />
   </ItemGroup>
 
 </Project>

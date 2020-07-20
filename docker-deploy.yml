@@ -4,7 +4,7 @@ services:
   auth:
     image: registry.gitlab.com/notguiri/auth:#{IMG_TAG}#
     deploy:
-      # replicas: 2
+      replicas: 2
       restart_policy:
         condition: on-failure
         max_attempts: 3
