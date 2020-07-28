@@ -45,12 +45,11 @@ namespace NG.Auth.Business.Impl
             {
                 Id = Guid.NewGuid(),
                 Name = registerRequest.Name,
-                Surname = registerRequest.Surname,
                 Birthdate = registerRequest.Birthdate,
                 PhoneNumber = registerRequest.PhoneNumber,
                 Email = registerRequest.Email,
                 Password = _passwordHasher.Hash(registerRequest.Password),
-                Role = Role.Basic,
+                Role = registerRequest.IsCommerce ? Role.Commerce : Role.Basic,
                 Image = null,
             };
 

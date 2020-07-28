@@ -9,9 +9,6 @@ namespace NG.Auth.Domain
         [Required]
         public string Name { get; set; }
 
-        [Required]
-        public string Surname { get; set; }
-
         [BirthdateValidator(MinAge = 5, MaxAge = 120,
             ErrorMessage = "You must be between 6 and 119 years old to register")]
         public DateTime Birthdate { get; set; }
@@ -27,5 +24,7 @@ namespace NG.Auth.Domain
         [Required]
         [MinLength(5)]
         public string Password { get; set; }
+
+        public bool IsCommerce { get; set; }
     }
 }
