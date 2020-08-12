@@ -6,12 +6,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.4" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.4" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.6.0" />
+    <PackageReference Include="MailKit" Version="2.5.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,9 +22,9 @@
   </ItemGroup>
 
   <ItemGroup Label="NotGuiri Nuget">
-    <PackageReference Include="NG.Common.Library" Version="1.0.7" />
-    <PackageReference Include="NG.Common.Services" Version="1.0.7" />
-    <PackageReference Include="NG.DBManager.Infrastructure.Contracts" Version="1.0.11" />
-    <PackageReference Include="NG.DBManager.Infrastructure.Impl.EF" Version="1.0.11" />
+    <PackageReference Include="NG.Common.Library" Version="1.0.10" />
+    <PackageReference Include="NG.Common.Services" Version="1.0.10" />
+    <PackageReference Include="NG.DBManager.Infrastructure.Contracts" Version="1.0.17" />
+    <PackageReference Include="NG.DBManager.Infrastructure.Impl.EF" Version="1.0.17" />
   </ItemGroup>
 </Project>

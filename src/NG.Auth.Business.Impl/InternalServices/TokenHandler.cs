@@ -2,6 +2,7 @@
 using NG.Auth.Business.Contract.InternalServices;
 using NG.Auth.Domain;
 using NG.Common.Services.AuthorizationProvider;
+using NG.Common.Services.Token;
 using NG.DBManager.Infrastructure.Contracts.Models;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
 using System;
@@ -16,15 +17,18 @@ namespace NG.Auth.Business.Impl.InternalServices
         private readonly IAuthUnitOfWork _unitOfWork;
         private readonly IDistributedCache _distributedCache;
         private readonly IAuthorizationProvider _authorizationProvider;
+        private readonly ITokenService _tokenService;
 
         public TokenHandler(
             IAuthUnitOfWork unitOfWork,
             IDistributedCache distributedCache,
-            IAuthorizationProvider authorizationProvider)
+            IAuthorizationProvider authorizationProvider,
+            ITokenService tokenService)
         {
             _unitOfWork = unitOfWork;
             _distributedCache = distributedCache;
             _authorizationProvider = authorizationProvider;
+            _tokenService = tokenService;
         }
 
         public User GetUser(AuthenticationRequest credentials)
@@ -32,7 +36,7 @@ namespace NG.Auth.Business.Impl.InternalServices
             if (string.IsNullOrEmpty(credentials.PhoneNumber))
             {
                 return _unitOfWork.User
-                    .GetByEmail(credentials.EmailAddress);
+                    .GetByEmail(credentials.EmailAddress.ToLower());
             }
             else
             {
@@ -76,6 +80,15 @@ namespace NG.Auth.Business.Impl.InternalServices
             return new AuthenticationResponse(
                     _authorizationProvider.GetToken(authorizedUser),
                     GenerateRefreshToken(authorizedUser));
+        }
+
+        public bool IsEmailConfirmed(string accessToken)
+        {
+            var tokenClaims = _tokenService.GetClaims(accessToken);
+
+            var emailConfirmed = tokenClaims.First(c => string.Equals(c.Type, "EmailConfirmed")).Value == "True";
+
+            return emailConfirmed;
         }
     }
 }

@@ -27,6 +27,7 @@ namespace NG.Auth.Business.Impl.IoCModule
 
             services.AddInfrastructureServices()
                     .AddSingleton<IPasswordHasher, PasswordHasher>()
+                    .AddSingleton<IEmailSender, EmailSender>()
                     .AddSingleton<ITokenService, TokenService>()
                     .AddScoped<IAuthorizationProvider, AuthorizationProvider>()
                     .AddScoped<ITokenHandler, TokenHandler>()

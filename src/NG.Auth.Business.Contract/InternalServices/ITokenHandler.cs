@@ -10,5 +10,6 @@ namespace NG.Auth.Business.Contract.InternalServices
         string GenerateRefreshToken(AuthorizedUser authorizedUser);
         void SaveRefreshTokenInCache(string refreshToken, AuthorizedUser authorizedUser);
         AuthenticationResponse Authenticate(string refreshToken);
+        bool IsEmailConfirmed(string accessToken);
     }
 }
