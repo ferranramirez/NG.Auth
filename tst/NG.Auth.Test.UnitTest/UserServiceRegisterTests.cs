@@ -7,6 +7,7 @@ using NG.Auth.Business.Impl;
 using NG.Auth.Domain;
 using NG.Common.Library.Exceptions;
 using NG.Common.Services.AuthorizationProvider;
+using NG.Common.Services.Token;
 using NG.DBManager.Infrastructure.Contracts.Models;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
 using System;
@@ -20,7 +21,9 @@ namespace NG.Auth.Test.UnitTest
     {
         private readonly Mock<IAuthUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IAuthorizationProvider> _authorizationProviderMock;
+        private readonly Mock<ITokenService> _tokenServiceMock;
         private readonly Mock<ITokenHandler> _tokenHandlerMock;
+        private readonly Mock<IEmailSender> _emailSenderMock;
         private readonly Mock<IPasswordHasher> _passwordHasherMock;
         private readonly NullLogger<UserService> _nullLogger;
         private readonly IUserService _userService;
@@ -50,7 +53,9 @@ namespace NG.Auth.Test.UnitTest
             _unitOfWorkMock = new Mock<IAuthUnitOfWork>();
             _passwordHasherMock = new Mock<IPasswordHasher>();
             _authorizationProviderMock = new Mock<IAuthorizationProvider>();
+            _tokenServiceMock = new Mock<ITokenService>();
             _tokenHandlerMock = new Mock<ITokenHandler>();
+            _emailSenderMock = new Mock<IEmailSender>();
             _nullLogger = new NullLogger<UserService>();
 
             var errorsDictionary = new Dictionary<BusinessErrorType, BusinessErrorObject>
@@ -61,7 +66,8 @@ namespace NG.Auth.Test.UnitTest
             var _options = Options.Create(errorsDictionary);
 
             _userService = new UserService(_unitOfWorkMock.Object, _passwordHasherMock.Object,
-                _authorizationProviderMock.Object, _tokenHandlerMock.Object, _nullLogger, _options);
+                _authorizationProviderMock.Object, _tokenServiceMock.Object, _tokenHandlerMock.Object,
+                _emailSenderMock.Object, _nullLogger, _options);
         }
 
         [Fact(Skip = "Cannot know the Id of the mapped user when the mapping is done in the business layer")]
