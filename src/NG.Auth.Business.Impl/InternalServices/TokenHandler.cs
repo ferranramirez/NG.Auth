@@ -84,7 +84,9 @@ namespace NG.Auth.Business.Impl.InternalServices
 
         public bool IsEmailConfirmed(string accessToken)
         {
-            var tokenClaims = _tokenService.GetClaims(accessToken);
+            var authorizationHeader = string.Concat("bearer ", accessToken);
+
+            var tokenClaims = _tokenService.GetClaims(authorizationHeader);
 
             var emailConfirmed = tokenClaims.First(c => string.Equals(c.Type, "EmailConfirmed")).Value == "True";
 
