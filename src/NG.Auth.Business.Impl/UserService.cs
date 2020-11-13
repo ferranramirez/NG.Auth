@@ -157,11 +157,10 @@ namespace NG.Auth.Business.Impl
         }
         private AuthenticationResponse SendEmailToUser(User user)
         {
-            //var authenticationResponse = GetAuthenticationResponse(user);
-            //var firstName = user.Name.Split(" ");
-            _emailSender.SendEmailConfirmation("Name", "ferranramireznavajon@gmail.com", "token");// firstName[0], user.Email, authenticationResponse.AccessToken);
-            //return authenticationResponse;
-            return null;
+            var authenticationResponse = GetAuthenticationResponse(user);
+            var firstName = user.Name.Split(" ");
+            _emailSender.SendEmailConfirmation(firstName[0], user.Email, authenticationResponse.AccessToken);
+            return authenticationResponse;
         }
 
         private AuthenticationResponse GetAuthenticationResponse(User user)
