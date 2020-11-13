@@ -2,8 +2,12 @@
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using NG.Auth.Business.Contract.InternalServices;
+using NG.Common.Library.Exceptions;
 using System;
 using System.IO;
+using System.Net.Mail;
+using System.Net.Security;
+using System.Net.Sockets;
 
 namespace NG.Auth.Business.Impl.InternalServices
 {
@@ -54,13 +58,39 @@ namespace NG.Auth.Business.Impl.InternalServices
 
             message.Body = builder.ToMessageBody();
 
-            using (var client = new MailKit.Net.Smtp.SmtpClient())
+            MailMessage message2 = new MailMessage
             {
-                client.Connect(host, port, false);
-                client.Authenticate(userName, password);
-                client.Send(message);
-                client.Disconnect(true);
+                From = new MailAddress(userName),
+                Subject = subject,
+                Body = builder.ToMessageBody().ToString()
+            };
+            message2.To.Add(toEmail);
+            message2.IsBodyHtml = true;
+            message2.BodyEncoding = System.Text.Encoding.UTF8;
+
+            try
+            {
+                SmtpClient SmtpServer = new SmtpClient(host);
+
+                SmtpServer.Port = 587;
+                SmtpServer.Credentials = new System.Net.NetworkCredential(userName, password);
+                // SmtpServer.EnableSsl = true;
+
+                SmtpServer.Send(message2);
             }
+            catch (Exception ex)
+            {
+                //var error = _errors[BusinessErrorType.SMTPFailed];
+                //throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
+            }
+
+            //using (var client = new MailKit.Net.Smtp.SmtpClient())
+            //{
+            //    client.Connect(host, port, false);
+            //    client.Authenticate(userName, password);
+            //    client.Send(message);
+            //    client.Disconnect(true);
+            //}
         }
     }
 }

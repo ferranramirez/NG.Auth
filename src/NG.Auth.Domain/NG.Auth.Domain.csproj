@@ -9,6 +9,6 @@
   </ItemGroup>
 
   <ItemGroup Label="NotGuiri Nuget">
-    <PackageReference Include="NG.DBManager.Infrastructure.Impl.EF" Version="1.0.17" />
+    <PackageReference Include="NG.DBManager.Infrastructure.Impl.EF" Version="1.0.24" />
   </ItemGroup>
 </Project>
