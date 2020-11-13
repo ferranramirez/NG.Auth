@@ -9,11 +9,11 @@ WORKDIR /api
 ARG PAT
 RUN wget -qO- https://raw.githubusercontent.com/Microsoft/artifacts-credprovider/master/helpers/installcredprovider.sh | bash
 ENV NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED true
-ENV VSS_NUGET_EXTERNAL_FEED_ENDPOINTS "{\"endpointCredentials\": [{\"endpoint\":\"https://pkgs.dev.azure.com/ntguiri/_packaging/ntguiri/nuget/v3/index.json\", \"password\":\"${PAT}\"}]}"
+ENV VSS_NUGET_EXTERNAL_FEED_ENDPOINTS "{\"endpointCredentials\": [{\"endpoint\":\"https://pkgs.dev.azure.com/notguiri/_packaging/notguiri/nuget/v3/index.json\", \"password\":\"${PAT}\"}]}"
 ENV DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER 0
 
 COPY . .
-RUN dotnet restore -s "https://pkgs.dev.azure.com/ntguiri/_packaging/ntguiri/nuget/v3/index.json" -s "https://api.nuget.org/v3/index.json" "NG.Auth.sln"
+RUN dotnet restore -s "https://pkgs.dev.azure.com/notguiri/_packaging/notguiri/nuget/v3/index.json" -s "https://api.nuget.org/v3/index.json" "NG.Auth.sln"
 
 # dotnet build and test
 RUN dotnet build -c Release --no-restore
