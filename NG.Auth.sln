@@ -22,10 +22,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A0BAB7BD-C924-47AA-B60F-BD07A9C0BFD5}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		ci-pipeline.yml = ci-pipeline.yml
+		develop-pipeline.yml = develop-pipeline.yml
 		docker-compose.yml = docker-compose.yml
 		docker-deploy.yml = docker-deploy.yml
 		Dockerfile = Dockerfile
+		master-pipeline.yml = master-pipeline.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NG.Auth.Test.E2ETest", "tst\NG.Auth.Test.E2ETest\NG.Auth.Test.E2ETest.csproj", "{C3DA00C7-603A-4081-AC23-737875B408EE}"
