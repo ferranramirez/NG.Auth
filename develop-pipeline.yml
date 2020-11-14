@@ -1,0 +1,68 @@
+trigger:
+- develop
+
+pool:
+  vmImage: 'ubuntu-18.04'
+
+steps:
+- task: replacetokens@3
+  displayName: 'Replace tokens appsettings'
+  inputs:
+    rootDirectory: '$(System.DefaultWorkingDirectory)'
+    targetFiles: '**/appsettings.*.json'
+    encoding: 'auto'
+    writeBOM: true
+    actionOnMissing: 'warn'
+    keepToken: false
+    enableTelemetry: false
+
+- task: replacetokens@3
+  displayName: 'Replace tokens docker-deploy.yml'
+  inputs:
+    rootDirectory: '$(System.DefaultWorkingDirectory)'
+    targetFiles: '**/docker-deploy.yml'
+    encoding: 'auto'
+    writeBOM: true
+    actionOnMissing: 'warn'
+    keepToken: false
+    enableTelemetry: false
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish docker-deploy.yml'
+  inputs:
+    PathtoPublish: 'docker-deploy.yml'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+- task: Docker@2
+  displayName: 'Restore, Build & UnitTest'
+  inputs:
+    containerRegistry: 'GitLabRegistry/ferranramirez'
+    repository: 'notguiri/$(projectName)'
+    command: 'build'
+    Dockerfile: '**/Dockerfile'
+    tags: '$(Build.SourceBranchName)'
+    arguments: '--build-arg PAT=$(PAT)'
+    addPipelineData: false
+
+- task: Bash@3
+  displayName: 'Copy TestResults out of Docker'
+  inputs:
+    targetType: 'inline'
+    script: |
+      docker create -ti --name testcontainer registry.gitlab.com/notguiri/$(projectName):$(Build.SourceBranchName)
+      docker cp testcontainer:/publish/test $(Build.ArtifactStagingDirectory)/TestResults
+      docker rm -fv testcontainer
+
+- task: PublishTestResults@2
+  displayName: 'Publish TestResults'
+  inputs:
+    testResultsFormat: 'VSTest'
+    testResultsFiles: 'result.trx'
+    searchFolder: '$(Build.ArtifactStagingDirectory)/TestResults'
+- task: Docker@2
+  displayName: 'Docker Push'
+  inputs:
+    containerRegistry: 'GitLabRegistry/ferranramirez'
+    repository: 'notguiri/$(projectName)'
+    command: 'push'
+    tags: '$(Build.SourceBranchName)'
+    addPipelineData: false

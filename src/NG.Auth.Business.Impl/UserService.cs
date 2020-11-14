@@ -63,8 +63,8 @@ namespace NG.Auth.Business.Impl
                 Image = null,
             };
 
-            _unitOfWork.User.Add(user);
-            await _unitOfWork.CommitAsync();
+            //_unitOfWork.User.Add(user);
+            //await _unitOfWork.CommitAsync();
 
             return SendEmailToUser(user);
         }

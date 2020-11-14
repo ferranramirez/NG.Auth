@@ -1,9 +1,15 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using MailKit.Security;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using NG.Auth.Business.Contract.InternalServices;
+using NG.Common.Library.Exceptions;
 using System;
 using System.IO;
+using System.Net.Mail;
+using System.Net.Security;
+using System.Net.Sockets;
+using System.Text;
 
 namespace NG.Auth.Business.Impl.InternalServices
 {
@@ -54,13 +60,11 @@ namespace NG.Auth.Business.Impl.InternalServices
 
             message.Body = builder.ToMessageBody();
 
-            using (var client = new MailKit.Net.Smtp.SmtpClient())
-            {
-                client.Connect(host, port, false);
-                client.Authenticate(userName, password);
-                client.Send(message);
-                client.Disconnect(true);
-            }
+            using var client = new MailKit.Net.Smtp.SmtpClient();
+            client.Connect(host, port, SecureSocketOptions.None);
+            client.Authenticate(userName, password);
+            client.Send(message);
+            client.Disconnect(true);
         }
     }
 }
