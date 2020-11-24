@@ -7,9 +7,11 @@ using NG.Auth.Domain.ConfirmationEmailStatus;
 using NG.Common.Library.Exceptions;
 using NG.Common.Services.AuthorizationProvider;
 using NG.Common.Services.Token;
+using NG.DBManager.Infrastructure.Contracts.Contexts;
 using NG.DBManager.Infrastructure.Contracts.Models;
 using NG.DBManager.Infrastructure.Contracts.Models.Enums;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
+using NG.DBManager.Infrastructure.Impl.EF.UnitsOfWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,6 +98,27 @@ namespace NG.Auth.Business.Impl
             return GetAuthenticationResponse(user);
         }
 
+        public string GetToken(AuthenticationRequest credentials)
+        {
+            User user = _tokenHandler.GetUser(credentials);
+
+            if (user == null)
+            {
+                var error = _errors[BusinessErrorType.UserNotFound];
+                throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
+            }
+
+            var (Verified, NeedsUpgrade) = _passwordHasher.Check(user.Password, credentials.Password);
+
+            if (!Verified)
+            {
+                var error = _errors[BusinessErrorType.WrongPassword];
+                throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
+            }
+
+            return GetAccessToken(user);
+        }
+
         public AuthenticationResponse RefreshToken(string refreshToken)
         {
             var authenticationResponse = _tokenHandler.Authenticate(refreshToken);
@@ -170,6 +193,12 @@ namespace NG.Auth.Business.Impl
             return new AuthenticationResponse(
                 _authorizationProvider.GetToken(authUser),
                 _tokenHandler.GenerateRefreshToken(authUser));
+        }
+
+        private string GetAccessToken(User user)
+        {
+            AuthorizedUser authUser = new AuthorizedUser(user.Id, user.Email, user.Role.ToString(), user.EmailConfirmed);
+            return _authorizationProvider.GetToken(authUser);
         }
     }
 }

@@ -140,6 +140,29 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
 
             return Ok(authenticationResponse);
         }
+        
+        /// <summary>
+        /// Generate a token for the given User, even if this is still not confirmed
+        /// </summary>
+        /// <param name="credentials">The user credentials to log in</param>
+        /// <remarks>
+        /// ## Response code meanings
+        /// - 200 - Token succesfully created.
+        /// - 400 - The model is not properly built.
+        /// - 500 - An internal server error. Something bad and unexpected happened.
+        /// - 543 - A handled error. This error was expected, check the message.
+        /// </remarks>
+        [HttpPost("GetToken")]
+        [ProducesResponseType(typeof(ApiError), 543)]
+        [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(AuthenticationResponse), (int)HttpStatusCode.OK)]
+        public IActionResult GetToken(AuthenticationRequest credentials)
+        {
+            var accessToken = _userService.GetToken(credentials);
+
+            return Ok(accessToken);
+        }
 
         /// <summary>
         /// Give a new token
