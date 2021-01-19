@@ -29,6 +29,8 @@ namespace NG.Auth.Presentation.WebAPI
 
             services.AddHealthCheckMiddleware(Configuration);
 
+            services.AddCors();
+            
             services.AddControllers();
 
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -54,6 +56,8 @@ namespace NG.Auth.Presentation.WebAPI
             app.UseHealthCheckMiddleware();
 
             app.UseHttpsRedirection();
+
+            app.UseCors();
 
             app.UseRouting();
 
