@@ -56,7 +56,8 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         /// <summary>
         /// Confirm new User's email
         /// </summary>
-        /// <param name="ConfirmationToken">The confirmation token to confirm the user's email.</param>
+        /// <param name="ConfirmationToken">A refreshToken to confirm the user's email.</param>
+        /// <param name="AccessToken">The accessToken in case is required to resend the confirmation email.</param>
         /// <remarks>
         /// ## Response code meanings
         /// - 200 - Email successfully confirmed.
@@ -69,16 +70,14 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(AuthenticationResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> ConfirmEmail([FromQuery] string ConfirmationToken)
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string ConfirmationToken, [FromQuery] string AccessToken)
         {
-            var confirmationResponse = await _userService.ConfirmEmail(ConfirmationToken);
-            var emailStatus = confirmationResponse.Item1;
-            var token = confirmationResponse.Item2;
+            var emailStatus = await _userService.ConfirmEmail(ConfirmationToken, AccessToken);
 
             if (emailStatus == ConfirmationEmailStatus.TokenExpired)
             {
                 var baseUrl = _configuration.GetSection("Urls").GetSection("Base").Value;
-                var resendEmailToken = string.Concat("User/ResendEmail?ConfirmationToken=", token);
+                var resendEmailToken = string.Concat("Email/ResendConfirmation?AccessToken=", AccessToken);
                 var resendEmailUrl = Path.Combine(baseUrl, resendEmailToken);
 
                 return View("TokenExpired", resendEmailUrl);
@@ -88,32 +87,6 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
                 return View("EmailAlreadyConfirmed");
 
             return View("EmailConfirmed");
-        }
-
-        /// <summary>
-        /// Confirm new User's email
-        /// </summary>
-        /// <param name="ConfirmationToken">The confirmation token to confirm the user's email.</param>
-        /// <remarks>
-        /// ## Response code meanings
-        /// - 200 - Email successfully confirmed.
-        /// - 400 - The model is not properly built.
-        /// - 500 - An internal server error. Something bad and unexpected happened.
-        /// - 543 - A handled error. This error was expected, check the message.
-        /// </remarks>
-        [HttpGet("ResendEmail")]
-        [ProducesResponseType(typeof(ApiError), 543)]
-        [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(AuthenticationResponse), (int)HttpStatusCode.OK)]
-        public IActionResult ResendEmail([FromQuery] string ConfirmationToken)
-        {
-            var emailStatus = _userService.ResendEmail(ConfirmationToken);
-
-            if (emailStatus == ConfirmationEmailStatus.EmailAlreadyConfirmed)
-                return View("EmailAlreadyConfirmed");
-
-            return View("EmailSent");
         }
 
         /// <summary>
@@ -140,7 +113,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
 
             return Ok(authenticationResponse);
         }
-        
+
         /// <summary>
         /// Generate a token for the given User, even if this is still not confirmed
         /// </summary>
@@ -185,6 +158,26 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
             // SetTokenCookie(authenticationResponse.RefreshToken);
 
             return Ok(authenticationResponse);
+        }
+
+        /// <summary>
+        /// Change user password
+        /// </summary>
+        /// <remarks>
+        /// ## Response code meanings
+        /// - 200 - Token succesfully created.
+        /// - 400 - The model is not properly built.
+        /// - 500 - An internal server error. Something bad and unexpected happened.
+        /// - 543 - A handled error. This error was expected, check the message.
+        /// </remarks>
+        [HttpPost("ChangePassword")]
+        public async Task<bool> ChangePassword(/*[FromQuery] string changePasswordToken, */[FromQuery] string password)
+        {
+            var changePasswordToken = Request.Headers["changePasswordToken"];
+
+            var authenticationResponse = await _userService.UpdatePassword(changePasswordToken, password);
+
+            return authenticationResponse;
         }
 
         private void SetTokenCookie(string token)

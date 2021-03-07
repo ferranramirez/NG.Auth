@@ -2,6 +2,7 @@
 {
     public interface IEmailSender
     {
-        void SendEmailConfirmation(string toName, string toEmail, string token);
+        void SendConfirmationEmail(string toName, string toEmail, string refreshToken, string accessToken);
+        void SendPasswordRecoveryEmail(string toName, string toEmail, string token);
     }
 }

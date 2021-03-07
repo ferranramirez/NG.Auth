@@ -8,8 +8,11 @@ namespace NG.Auth.Business.Contract.InternalServices
     {
         User GetUser(AuthenticationRequest credentials);
         string GenerateRefreshToken(AuthorizedUser authorizedUser);
+        string GenerateChangePasswordToken(string email);
         void SaveRefreshTokenInCache(string refreshToken, AuthorizedUser authorizedUser);
         AuthenticationResponse Authenticate(string refreshToken);
+        string GetEmailFromCache(string changePasswordToken);
+        AuthorizedUser GetAuthorizedUserFromCache(string confirmationToken);
         bool IsEmailConfirmed(string accessToken);
     }
 }

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NG.Auth.Business.Contract.InternalServices;
+using NG.Auth.Business.Impl.InternalServices;
 using NG.Auth.Business.Impl.IoCModule;
 using NG.Common.Library.Extensions;
 using NG.Common.Library.Filters;
