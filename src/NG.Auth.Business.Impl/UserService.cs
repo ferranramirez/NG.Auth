@@ -60,7 +60,7 @@ namespace NG.Auth.Business.Impl
                 Birthdate = registerRequest.Birthdate,
                 PhoneNumber = registerRequest.PhoneNumber,
                 Email = registerRequest.Email.ToLower(),
-                Password = _passwordHasher.Hash(registerRequest.Password),
+                Password = registerRequest.Password,
                 Role = registerRequest.IsCommerce ? Role.Commerce : Role.Basic,
                 Image = null,
             };
@@ -140,49 +140,35 @@ namespace NG.Auth.Business.Impl
             return authenticationResponse;
         }
 
-        public async Task<(ConfirmationEmailStatus, string)> ConfirmEmail(string confirmationToken)
+        public async Task<ConfirmationEmailStatus> ConfirmEmail(string confirmationToken /*is a 'refreshToken'*/, string accessToken)
         {
-            var tokenClaims = _tokenService.DecodeToken(confirmationToken).Claims;
-            var exp = int.Parse(tokenClaims.First(c => string.Equals(c.Type, "exp")).Value);
-            var baseDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            var expDate = baseDate.AddSeconds(exp);
-            if (DateTime.UtcNow > expDate)
+            AuthorizedUser authorizedUser = _tokenHandler.GetAuthorizedUserFromCache(confirmationToken);
+
+            if (authorizedUser == null)
             {
-                return (ConfirmationEmailStatus.TokenExpired, confirmationToken);
+                return ConfirmationEmailStatus.TokenExpired;
             }
 
-            var userId = Guid.Parse(tokenClaims.First(c => string.Equals(c.Type, ClaimTypes.NameIdentifier)).Value);
-            _unitOfWork.User.ConfirmEmail(userId);
-
-            if (await _unitOfWork.CommitAsync() == 1)
-            {
-                return (ConfirmationEmailStatus.EmailConfirmed, null);
-            }
-
-            return (ConfirmationEmailStatus.TokenExpired, null);
-
-        }
-
-        public ConfirmationEmailStatus ResendEmail(string confirmationToken)
-        {
-            var tokenClaims = _tokenService.DecodeToken(confirmationToken).Claims;
-            var userId = Guid.Parse(tokenClaims.First(c => string.Equals(c.Type, ClaimTypes.NameIdentifier)).Value);
-            var user = _unitOfWork.User.Get(userId);
-
-            if (user.EmailConfirmed)
+            if (authorizedUser.EmailConfirmed ||
+                _unitOfWork.User.GetByEmail(authorizedUser.Email).EmailConfirmed == true)
             {
                 return ConfirmationEmailStatus.EmailAlreadyConfirmed;
             }
 
-            SendEmailToUser(user);
+            _unitOfWork.User.ConfirmEmail(authorizedUser.UserId);
 
-            return ConfirmationEmailStatus.EmailSent;
+            if (await _unitOfWork.CommitAsync() == 1)
+            {
+                return ConfirmationEmailStatus.EmailConfirmed;
+            }
+
+            return ConfirmationEmailStatus.TokenExpired;
         }
         private AuthenticationResponse SendEmailToUser(User user)
         {
             var authenticationResponse = GetAuthenticationResponse(user);
             var firstName = user.Name.Split(" ");
-            _emailSender.SendEmailConfirmation(firstName[0], user.Email, authenticationResponse.AccessToken);
+            _emailSender.SendConfirmationEmail(firstName[0], user.Email, authenticationResponse.RefreshToken, authenticationResponse.AccessToken);
             return authenticationResponse;
         }
 
@@ -199,6 +185,24 @@ namespace NG.Auth.Business.Impl
         {
             AuthorizedUser authUser = new AuthorizedUser(user.Id, user.Email, user.Role.ToString(), user.EmailConfirmed);
             return _authorizationProvider.GetToken(authUser);
+        }
+
+        public async Task<bool> UpdatePassword(string token, string password)
+        {
+            string email = _tokenHandler.GetEmailFromCache(token);
+
+            if (email == null)
+                return false;
+
+            var user = _unitOfWork.User.GetByEmail(email);
+            user.Password = password;
+            _unitOfWork.User.Edit(user);
+            var rows = await _unitOfWork.CommitAsync();
+
+            if (rows > 0)
+                return true;
+
+            return false;
         }
     }
 }

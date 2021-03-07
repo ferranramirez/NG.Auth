@@ -52,13 +52,12 @@ namespace NG.Auth.Business.Impl.InternalServices
             var randomBytes = new byte[64];
             rngCryptoServiceProvider.GetBytes(randomBytes);
 
-            var refreshToken = Convert.ToBase64String(randomBytes);
+            var refreshToken = Convert.ToBase64String(randomBytes).Replace('+', '.');
 
             SaveRefreshTokenInCache(refreshToken, authorizedUser);
 
             return refreshToken;
         }
-
         public void SaveRefreshTokenInCache(string refreshToken, AuthorizedUser authorizedUser)
         {
             DistributedCacheEntryOptions cacheOptions = new DistributedCacheEntryOptions
@@ -66,6 +65,28 @@ namespace NG.Auth.Business.Impl.InternalServices
                 AbsoluteExpirationRelativeToNow = new TimeSpan(7, 0, 0, 0)
             };
             _distributedCache.SetString(refreshToken, JsonSerializer.Serialize(authorizedUser), cacheOptions);
+        }
+
+        public string GenerateChangePasswordToken(string email)
+        {
+            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
+            var randomBytes = new byte[64];
+            rngCryptoServiceProvider.GetBytes(randomBytes);
+
+            var changePasswordToken = Convert.ToBase64String(randomBytes).Replace('+', '.');
+
+            SaveStringTokenInCache(changePasswordToken, email);
+
+            return changePasswordToken;
+        }
+
+        public void SaveStringTokenInCache(string refreshToken, string email)
+        {
+            DistributedCacheEntryOptions cacheOptions = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = new TimeSpan(7, 0, 0, 0)
+            };
+            _distributedCache.SetString(refreshToken, JsonSerializer.Serialize(email), cacheOptions);
         }
 
         public AuthenticationResponse Authenticate(string refreshToken)
@@ -80,6 +101,21 @@ namespace NG.Auth.Business.Impl.InternalServices
             return new AuthenticationResponse(
                     _authorizationProvider.GetToken(authorizedUser),
                     GenerateRefreshToken(authorizedUser));
+        }
+        public string GetEmailFromCache(string changePasswordToken)
+        {
+            var emailCache = _distributedCache.GetString(changePasswordToken);
+            if (emailCache == null) return null;
+
+            return JsonSerializer.Deserialize<string>(emailCache);
+        }
+
+        public AuthorizedUser GetAuthorizedUserFromCache(string confirmationToken)
+        {
+            var authorizedUser = _distributedCache.GetString(confirmationToken);
+            if (authorizedUser == null) return null;
+
+            return JsonSerializer.Deserialize<AuthorizedUser>(authorizedUser);
         }
 
         public bool IsEmailConfirmed(string accessToken)

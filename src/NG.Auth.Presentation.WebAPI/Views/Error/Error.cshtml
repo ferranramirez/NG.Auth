@@ -1,0 +1,256 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Problemas técnicos</title>
+    <meta name="robots" content="noindex" />
+    <link rel="apple-touch-icon"
+          sizes="180x180"
+          href="https://cdn.notguiri.com/shared/img/favicon/apple-touch-icon.png" />
+    <link rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="https://cdn.notguiri.com/shared/img/favicon/favicon-32x32.png" />
+    <link rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="https://cdn.notguiri.com/shared/img/favicon/favicon-16x16.png" />
+    <link rel="manifest"
+          href="https://cdn.notguiri.com/shared/img/favicon/site.webmanifest" />
+    <link rel="mask-icon"
+          href="https://cdn.notguiri.com/shared/img/favicon/safari-pinned-tab.svg"
+          color="#8dc6a5" />
+    <link rel="shortcut icon"
+          href="https://cdn.notguiri.com/shared/img/favicon/favicon.ico" />
+    <meta name="apple-mobile-web-app-title" content="Not Guiri CMS" />
+    <meta name="application-name" content="Not Guiri CMS" />
+    <meta name="msapplication-TileColor" content="#8dc6a5" />
+    <meta name="msapplication-config"
+          content="https://cdn.notguiri.com/shared/img/favicon/browserconfig.xml" />
+    <meta name="theme-color" content="#476d5a" />
+    <link rel="preconnect"
+          href="https://cdn.notguiri.com/"
+          crossorigin="true" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter&family=Poppins:wght@700&display=swap"
+          rel="stylesheet" />
+    <style>
+        body,
+        html {
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p {
+            margin: 0;
+            margin-bottom: 12px;
+            padding: 0;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-weight: 500;
+        }
+
+        p,
+        h4,
+        h5,
+        h6 {
+            font-weight: 600;
+        }
+
+        a,
+        a[href] {
+            text-decoration: none;
+            color: #4e4e4e;
+        }
+
+        img,
+        svg {
+            max-width: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+            color: #4e4e4e;
+        }
+
+        .bold-text {
+            font-family: "Poppins Bold", -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+        }
+
+        p,
+        h2,
+        h1,
+        a,
+        span,
+        small {
+            color: #4e4e4e;
+        }
+
+        .title {
+            color: #69a78b;
+            text-align: center;
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+
+            .form p {
+                text-align: center;
+                margin: 32px 0;
+                display: block;
+            }
+
+        .form-image {
+            text-align: center;
+            max-width: 250px;
+            align-self: center;
+            margin: 32px 0;
+        }
+
+        .content-wrapper {
+            padding: 24px;
+            display: inline-flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            margin: 0 8px;
+            display: inline-block;
+        }
+
+        .contact-wrapper {
+            margin: 12px;
+            display: inline-block;
+            text-align: center;
+            align-items: center;
+        }
+
+        footer {
+            margin: 12px;
+        }
+
+        .form-button:hover {
+            background-color: #b12342;
+        }
+
+        .footer-text small,
+        .footer-text span {
+            color: #aeaeae !important;
+        }
+
+
+        footer p {
+            font-size: .85em;
+        }
+
+        footer {
+            text-align: center;
+        }
+
+        .validation-text {
+            color: rgb(216, 25, 0);
+            display: none;
+        }
+
+        .form-button {
+            display: flex;
+            justify-content: center;
+            padding: 12px 24px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            border-radius: 32px;
+            border: none;
+            background-color: #d9274e;
+            color: #fff;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+        a.form-button {
+            color: #fff;
+        }
+
+        button[disabled] {
+            background-color: #cfcfcf;
+            color: #999999;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <img width="100"
+             src="https://cdn.notguiri.com/shared/img/brand/logo_color.svg" />
+
+        <div class="form-container">
+            <form id="form" class="form">
+                <img class="form-image"
+                     src="https://cdn.notguiri.com/shared/img/utils/error.svg" />
+                <p>No hemos podido realizar tu petición. Por favor, inténtalo de nuevo. Si el problema persiste, ponte en contacto con nosotros.</p>
+                <a class="form-button" href="mailto:hola@notguiri.com">
+                    Contactar con NotGuiri
+                </a>
+            </form>
+        </div>
+    </div>
+    <footer>
+        <div class="contact-wrapper">
+            <a href="https://www.instagram.com/not.guiri/"
+               rel="noopener"
+               class="icon"
+               target="_blank">
+                <img src="https://cdn.notguiri.com/mail/confirm-email/instagram.png" />
+            </a>
+            <a href="https://www.facebook.com/notguiri"
+               rel="noopener"
+               class="icon"
+               target="_blank">
+                <img src="https://cdn.notguiri.com/mail/confirm-email/facebook.png" />
+            </a>
+            <p>Síguenos en nuestras redes sociales para estar al día</p>
+            <div class="footer-text">
+                <small>
+                    &copy; <span id="year"></span>
+                    <a href="https://notguiri.com" rel="noopener" target="_blank">Not Guiri</a>
+                    | Hear the city with Not Guiri
+                </small>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        var date = new Date();
+        document.querySelector("#year").innerText = date.getFullYear();
+    </script>
+</body>
+</html>
