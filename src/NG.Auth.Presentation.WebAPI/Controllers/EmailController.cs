@@ -39,7 +39,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         /// <summary>
         /// Resend confirmation email
         /// </summary>
-        /// <param name="ConfirmationToken">The confirmation token to confirm the user's email.</param>
+        /// <param name="AccessToken">The confirmation token to confirm the user's email.</param>
         /// <remarks>
         /// ## Response code meanings
         /// - 200 - Email successfully confirmed.
@@ -58,6 +58,9 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
 
             if (emailStatus == ConfirmationEmailStatus.EmailAlreadyConfirmed)
                 return View("EmailAlreadyConfirmed");
+
+            if (emailStatus == ConfirmationEmailStatus.Error)
+                return View("Error");
 
             return View("EmailSent");
         }

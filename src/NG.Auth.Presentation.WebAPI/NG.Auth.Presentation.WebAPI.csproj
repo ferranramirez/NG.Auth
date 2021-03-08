@@ -47,7 +47,7 @@
     <Content Update="Views\Email\EmailSent.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="Views\Error\Error.cshtml">
+    <Content Update="Views\Shared\Error.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Views\Email\TokenExpired.cshtml">
