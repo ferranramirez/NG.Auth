@@ -57,6 +57,11 @@ namespace NG.Auth.Business.Impl
             var userId = Guid.Parse(tokenClaims.First(c => string.Equals(c.Type, ClaimTypes.NameIdentifier)).Value);
             var user = _unitOfWork.User.Get(userId);
 
+            if (user == null)
+            {
+                return ConfirmationEmailStatus.Error;
+            }
+
             if (user.EmailConfirmed)
             {
                 return ConfirmationEmailStatus.EmailAlreadyConfirmed;

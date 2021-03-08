@@ -5,6 +5,7 @@
         EmailConfirmed,
         TokenExpired,
         EmailAlreadyConfirmed,
-        EmailSent
+        EmailSent,
+        Error
     }
 }
