@@ -62,7 +62,7 @@
     <Content Update="Views\User\EmailConfirmed.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="Views\User\EmailSent.cshtml">
+    <Content Update="Views\Email\EmailSent.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
