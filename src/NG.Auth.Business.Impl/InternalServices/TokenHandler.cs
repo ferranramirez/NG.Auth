@@ -84,7 +84,7 @@ namespace NG.Auth.Business.Impl.InternalServices
         {
             DistributedCacheEntryOptions cacheOptions = new DistributedCacheEntryOptions
             {
-                AbsoluteExpirationRelativeToNow = new TimeSpan(7, 0, 0, 0)
+                AbsoluteExpirationRelativeToNow = new TimeSpan(0, 2, 0, 0)
             };
             _distributedCache.SetString(refreshToken, JsonSerializer.Serialize(email), cacheOptions);
         }
@@ -102,6 +102,7 @@ namespace NG.Auth.Business.Impl.InternalServices
                     _authorizationProvider.GetToken(authorizedUser),
                     GenerateRefreshToken(authorizedUser));
         }
+
         public string GetEmailFromCache(string changePasswordToken)
         {
             var emailCache = _distributedCache.GetString(changePasswordToken);

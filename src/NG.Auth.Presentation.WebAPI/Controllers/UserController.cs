@@ -80,7 +80,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
                 var resendEmailToken = string.Concat("Email/ResendConfirmation?AccessToken=", AccessToken);
                 var resendEmailUrl = Path.Combine(baseUrl, resendEmailToken);
 
-                return View("TokenExpired", resendEmailUrl);
+                return View("ValidationTokenExpired", resendEmailUrl);
             }
 
             if (emailStatus == ConfirmationEmailStatus.EmailAlreadyConfirmed)
@@ -160,6 +160,16 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
             return Ok(authenticationResponse);
         }
 
+        private void SetTokenCookie(string token)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+            Response.Cookies.Append("refreshToken", token, cookieOptions);
+        }
+
         /// <summary>
         /// Change user password
         /// </summary>
@@ -178,16 +188,6 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
             var authenticationResponse = await _userService.UpdatePassword(changePasswordToken, password);
 
             return authenticationResponse;
-        }
-
-        private void SetTokenCookie(string token)
-        {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(7)
-            };
-            Response.Cookies.Append("refreshToken", token, cookieOptions);
         }
     }
 }
