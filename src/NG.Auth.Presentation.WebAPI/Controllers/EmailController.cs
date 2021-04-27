@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NG.Auth.Business.Contract;
@@ -7,11 +6,8 @@ using NG.Auth.Business.Contract.InternalServices;
 using NG.Auth.Domain;
 using NG.Auth.Domain.ConfirmationEmailStatus;
 using NG.Common.Library.Filters;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace NG.Auth.Presentation.WebAPI.Controllers
 {
@@ -105,7 +101,10 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         [ProducesResponseType(typeof(AuthenticationResponse), (int)HttpStatusCode.OK)]
         public IActionResult ChangePasswordView([FromQuery] string ChangePasswordToken)
         {
-            // var user = _emailService.GetUser(ChangePasswordToken);
+            var user = _emailService.GetUser(ChangePasswordToken);
+
+            if (user == null)
+                return View("ResetPasswordTokenExpired");
 
             var baseUrl = _configuration.GetSection("Urls").GetSection("Base").Value;
             string newPasswordLink = string.Concat(baseUrl, "/User/ChangePassword");

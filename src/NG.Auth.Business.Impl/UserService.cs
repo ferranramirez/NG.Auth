@@ -7,15 +7,11 @@ using NG.Auth.Domain.ConfirmationEmailStatus;
 using NG.Common.Library.Exceptions;
 using NG.Common.Services.AuthorizationProvider;
 using NG.Common.Services.Token;
-using NG.DBManager.Infrastructure.Contracts.Contexts;
 using NG.DBManager.Infrastructure.Contracts.Models;
 using NG.DBManager.Infrastructure.Contracts.Models.Enums;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
-using NG.DBManager.Infrastructure.Impl.EF.UnitsOfWork;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace NG.Auth.Business.Impl
@@ -199,10 +195,7 @@ namespace NG.Auth.Business.Impl
             _unitOfWork.User.Edit(user);
             var rows = await _unitOfWork.CommitAsync();
 
-            if (rows > 0)
-                return true;
-
-            return false;
+            return rows > 0;
         }
     }
 }
