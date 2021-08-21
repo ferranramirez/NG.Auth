@@ -25,8 +25,8 @@ namespace NG.Auth.Test.UnitTest
         private readonly Mock<ITokenHandler> _tokenHandlerMock;
         private readonly Mock<IEmailSender> _emailSenderMock;
         private readonly Mock<IPasswordHasher> _passwordHasherMock;
-        private readonly NullLogger<UserService> _nullLogger;
-        private readonly IUserService _userService;
+        private readonly NullLogger<StandardUserService> _nullLogger;
+        private readonly IStandardUserService _userService;
         private readonly User user;
         private readonly AuthorizedUser authUser;
         private readonly AuthenticationResponse expected;
@@ -57,7 +57,7 @@ namespace NG.Auth.Test.UnitTest
             _tokenServiceMock = new Mock<ITokenService>();
             _tokenHandlerMock = new Mock<ITokenHandler>();
             _emailSenderMock = new Mock<IEmailSender>();
-            _nullLogger = new NullLogger<UserService>();
+            _nullLogger = new NullLogger<StandardUserService>();
 
             var errorsDictionary = new Dictionary<BusinessErrorType, BusinessErrorObject>
             {
@@ -67,21 +67,21 @@ namespace NG.Auth.Test.UnitTest
             };
             var _options = Options.Create(errorsDictionary);
 
-            _userService = new UserService(_unitOfWorkMock.Object, _passwordHasherMock.Object,
-                _authorizationProviderMock.Object, _tokenServiceMock.Object, _tokenHandlerMock.Object,
-                _emailSenderMock.Object, _nullLogger, _options);
+            //_userService = new StandardUserService(_unitOfWorkMock.Object, _passwordHasherMock.Object,
+            //    _authorizationProviderMock.Object, _tokenServiceMock.Object, _tokenHandlerMock.Object,
+            //    _emailSenderMock.Object, _nullLogger, _options);
         }
 
         [Fact]
         public void UserService_AuthenticateUser_ReturnsRightToken()
         {
             // Arrange
-            AuthenticationRequest credentials = new AuthenticationRequest()
+            StandardAuthenticationRequest credentials = new StandardAuthenticationRequest()
             {
                 EmailAddress = "basic@test.org",
                 Password = "secret123",
             };
-            _tokenHandlerMock.Setup(tknH => tknH.GetUser(credentials)).Returns(user);
+            //_tokenHandlerMock.Setup(tknH => tknH.GetUser(credentials)).Returns(user);
             _passwordHasherMock.Setup(pwdH => pwdH.Check("secret123", "secret123")).Returns((true, false));
             _authorizationProviderMock.Setup(authP => authP.GetToken(authUser)).Returns(expected.AccessToken);
             _tokenHandlerMock.Setup(tknH => tknH.GenerateRefreshToken(authUser)).Returns(expected.RefreshToken);
@@ -97,12 +97,12 @@ namespace NG.Auth.Test.UnitTest
         public void UserService_AuthenticateUserwithWrongEmail_ThrowsCustomException()
         {
             // Arrange
-            AuthenticationRequest credentials = new AuthenticationRequest()
+            StandardAuthenticationRequest credentials = new StandardAuthenticationRequest()
             {
                 EmailAddress = "WRONG_basic@test.org",
                 Password = "secret123"
             };
-            _tokenHandlerMock.Setup(tknH => tknH.GetUser(credentials)).Returns((User)null);
+            //_tokenHandlerMock.Setup(tknH => tknH.GetUser(credentials)).Returns((User)null);
 
             // Act
             Action action = () => _userService.Authenticate(credentials);
@@ -116,12 +116,12 @@ namespace NG.Auth.Test.UnitTest
         public void UserService_AuthenticateUserwithWrongPassword_ThrowsCustomException()
         {
             // Arrange
-            AuthenticationRequest credentials = new AuthenticationRequest()
+            StandardAuthenticationRequest credentials = new StandardAuthenticationRequest()
             {
                 EmailAddress = "basic@test.org",
                 Password = "WRONG_secret123"
             };
-            _tokenHandlerMock.Setup(tknH => tknH.GetUser(credentials)).Returns(user);
+            //_tokenHandlerMock.Setup(tknH => tknH.GetUser(credentials)).Returns(user);
 
             // Act
             Action action = () => _userService.Authenticate(credentials);

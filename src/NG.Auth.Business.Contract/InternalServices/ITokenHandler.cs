@@ -6,7 +6,7 @@ namespace NG.Auth.Business.Contract.InternalServices
 {
     public interface ITokenHandler
     {
-        User GetUser(AuthenticationRequest credentials);
+        StandardUser GetUser(StandardAuthenticationRequest credentials);
         string GenerateRefreshToken(AuthorizedUser authorizedUser);
         string GenerateChangePasswordToken(string email);
         void SaveRefreshTokenInCache(string refreshToken, AuthorizedUser authorizedUser);

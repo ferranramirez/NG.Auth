@@ -35,7 +35,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         /// <summary>
         /// Resend confirmation email
         /// </summary>
-        /// <param name="AccessToken">The confirmation token to confirm the user's email.</param>
+        /// <param name="AccessToken">The confirmation token to confirm the standard user's email.</param>
         /// <remarks>
         /// ## Response code meanings
         /// - 200 - Email successfully confirmed.
@@ -64,7 +64,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         /// <summary>
         /// Send an email to recover password
         /// </summary>
-        /// <param name="email">The email from the user who wants to change their password.</param>
+        /// <param name="email">The email from the standard user who wants to change their password.</param>
         /// <remarks>
         /// ## Response code meanings
         /// - 200 - Recover password email successfully sent.
@@ -86,7 +86,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         /// <summary>
         /// Send an email to recover password
         /// </summary>
-        /// <param name="ChangePasswordToken">The token to change the user's password.</param>
+        /// <param name="ChangePasswordToken">The token to change the standard user's password.</param>
         /// <remarks>
         /// ## Response code meanings
         /// - 200 - Recover password email successfully sent.

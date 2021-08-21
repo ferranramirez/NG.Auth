@@ -32,9 +32,11 @@ namespace NG.Auth.Business.Impl.IoCModule
                     .AddSingleton<ITemplateBuilder, TemplateBuilder>()
                     .AddScoped<IAuthorizationProvider, AuthorizationProvider>()
                     .AddScoped<ITokenHandler, TokenHandler>()
+                    .AddScoped<IUserService, UserService>()
                     .AddScoped<IAuthUnitOfWork, AuthUnitOfWork>()
                     .AddScoped<IEmailService, EmailService>()
-                    .AddScoped<IUserService, UserService>()
+                    .AddScoped<IStandardUserService, StandardUserService>()
+                    .AddScoped<ISocialUserService, SocialUserService>()
                     .Configure<Dictionary<BusinessErrorType, BusinessErrorObject>>(x => configuration.GetSection("Errors").Bind(x));
 
             return services;

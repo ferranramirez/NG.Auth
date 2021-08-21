@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NG.Auth.Domain
 {
-    public class AuthenticationRequest : IValidatableObject
+    public class StandardAuthenticationRequest : IValidatableObject
     {
         [EmailAddress]
         public string EmailAddress { get; set; }

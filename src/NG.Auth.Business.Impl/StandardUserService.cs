@@ -16,74 +16,88 @@ using System.Threading.Tasks;
 
 namespace NG.Auth.Business.Impl
 {
-    public class UserService : IUserService
+    public class StandardUserService : IStandardUserService
     {
         private readonly IAuthUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IAuthorizationProvider _authorizationProvider;
+        private readonly IEmailSender _emailSender;
         private readonly ITokenService _tokenService;
         private readonly ITokenHandler _tokenHandler;
-        private readonly IEmailSender _emailSender;
-        private readonly ILogger<UserService> _logger;
+        private readonly IUserService _userService;
+        private readonly ILogger<StandardUserService> _logger;
         private readonly Dictionary<BusinessErrorType, BusinessErrorObject> _errors;
 
-        public UserService(
+        public StandardUserService(
             IAuthUnitOfWork unitOfWork,
             IPasswordHasher passwordHasher,
             IAuthorizationProvider authorizationProvider,
+            IEmailSender emailSender,
             ITokenService tokenService,
             ITokenHandler tokenHandler,
-            IEmailSender emailSender,
-            ILogger<UserService> logger,
+            IUserService userService,
+            ILogger<StandardUserService> logger,
             IOptions<Dictionary<BusinessErrorType, BusinessErrorObject>> errors)
         {
             _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
             _authorizationProvider = authorizationProvider;
+            _emailSender = emailSender;
             _tokenService = tokenService;
             _tokenHandler = tokenHandler;
-            _emailSender = emailSender;
+            _userService = userService;
             _logger = logger;
             _errors = errors.Value;
         }
 
         public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest registerRequest)
         {
-            User user = new User()
-            {
-                Id = Guid.NewGuid(),
-                Name = registerRequest.Name,
-                Birthdate = registerRequest.Birthdate,
-                PhoneNumber = registerRequest.PhoneNumber,
-                Email = registerRequest.Email.ToLower(),
-                Password = registerRequest.Password,
-                Role = registerRequest.IsCommerce ? Role.Commerce : Role.Basic,
-                Image = null,
-            };
-
-            _unitOfWork.User.Add(user);
-            await _unitOfWork.CommitAsync();
-
-            return SendEmailToUser(user);
-        }
-
-        public AuthenticationResponse Authenticate(AuthenticationRequest credentials)
-        {
-            User user = _tokenHandler.GetUser(credentials);
+            var user = _unitOfWork.User.GetByEmail(registerRequest.Email);
 
             if (user == null)
+            {
+                user = new User()
+                {
+                    Name = registerRequest.Name,
+                    Birthdate = registerRequest.Birthdate,
+                    PhoneNumber = registerRequest.PhoneNumber,
+                    Email = registerRequest.Email.ToLower(),
+                    Role = registerRequest.IsCommerce ? Role.Commerce : Role.Basic,
+                    Image = null,
+                };
+            }
+
+            StandardUser standardUser = new StandardUser()
+            {
+                User = user,
+                UserId = user.Id,
+                Password = registerRequest.Password,
+            };
+
+            _unitOfWork.StandardUser.Add(standardUser);
+
+            await _unitOfWork.CommitAsync();
+
+            return SendEmailToUser(standardUser);
+        }
+
+        public AuthenticationResponse Authenticate(StandardAuthenticationRequest credentials)
+        {
+            StandardUser standardUser = _tokenHandler.GetUser(credentials);
+
+            if (standardUser == null)
             {
                 var error = _errors[BusinessErrorType.UserNotFound];
                 throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
             }
 
-            if (!user.EmailConfirmed)
+            if (!standardUser.EmailConfirmed)
             {
                 var error = _errors[BusinessErrorType.EmailNotConfirmed];
                 throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
             }
 
-            var (Verified, NeedsUpgrade) = _passwordHasher.Check(user.Password, credentials.Password);
+            var (Verified, NeedsUpgrade) = _passwordHasher.Check(standardUser.Password, credentials.Password);
 
             if (!Verified)
             {
@@ -91,28 +105,28 @@ namespace NG.Auth.Business.Impl
                 throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
             }
 
-            return GetAuthenticationResponse(user);
+            return _userService.GetAuthenticationResponse(GetAuthUser(standardUser));
         }
 
-        public string GetToken(AuthenticationRequest credentials)
+        public string GetToken(StandardAuthenticationRequest credentials)
         {
-            User user = _tokenHandler.GetUser(credentials);
+            StandardUser standardUser = _tokenHandler.GetUser(credentials);
 
-            if (user == null)
+            if (standardUser == null)
             {
                 var error = _errors[BusinessErrorType.UserNotFound];
                 throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
             }
 
-            var (Verified, NeedsUpgrade) = _passwordHasher.Check(user.Password, credentials.Password);
+            var (Verified, NeedsUpgrade) = _passwordHasher.Check(standardUser.Password, credentials.Password);
 
             if (!Verified)
             {
                 var error = _errors[BusinessErrorType.WrongPassword];
                 throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
             }
-
-            return GetAccessToken(user);
+            
+            return _userService.GetAccessToken(GetAuthUser(standardUser));
         }
 
         public AuthenticationResponse RefreshToken(string refreshToken)
@@ -146,12 +160,12 @@ namespace NG.Auth.Business.Impl
             }
 
             if (authorizedUser.EmailConfirmed ||
-                _unitOfWork.User.GetByEmail(authorizedUser.Email).EmailConfirmed == true)
+                _unitOfWork.StandardUser.GetByEmail(authorizedUser.Email).EmailConfirmed == true)
             {
                 return ConfirmationEmailStatus.EmailAlreadyConfirmed;
             }
 
-            _unitOfWork.User.ConfirmEmail(authorizedUser.UserId);
+            _unitOfWork.StandardUser.ConfirmEmail(authorizedUser.UserId);
 
             if (await _unitOfWork.CommitAsync() == 1)
             {
@@ -159,28 +173,6 @@ namespace NG.Auth.Business.Impl
             }
 
             return ConfirmationEmailStatus.TokenExpired;
-        }
-        private AuthenticationResponse SendEmailToUser(User user)
-        {
-            var authenticationResponse = GetAuthenticationResponse(user);
-            var firstName = user.Name.Split(" ");
-            _emailSender.SendConfirmationEmail(firstName[0], user.Email, authenticationResponse.RefreshToken, authenticationResponse.AccessToken);
-            return authenticationResponse;
-        }
-
-        private AuthenticationResponse GetAuthenticationResponse(User user)
-        {
-            AuthorizedUser authUser = new AuthorizedUser(user.Id, user.Email, user.Role.ToString(), user.EmailConfirmed);
-
-            return new AuthenticationResponse(
-                _authorizationProvider.GetToken(authUser),
-                _tokenHandler.GenerateRefreshToken(authUser));
-        }
-
-        private string GetAccessToken(User user)
-        {
-            AuthorizedUser authUser = new AuthorizedUser(user.Id, user.Email, user.Role.ToString(), user.EmailConfirmed);
-            return _authorizationProvider.GetToken(authUser);
         }
 
         public async Task<bool> UpdatePassword(string token, string password)
@@ -190,12 +182,24 @@ namespace NG.Auth.Business.Impl
             if (email == null)
                 return false;
 
-            var user = _unitOfWork.User.GetByEmail(email);
-            user.Password = password;
-            _unitOfWork.User.Edit(user);
+            var standardUser = _unitOfWork.StandardUser.GetByEmail(email);
+            standardUser.Password = password;
+            _unitOfWork.StandardUser.Edit(standardUser);
             var rows = await _unitOfWork.CommitAsync();
 
             return rows > 0;
+        }
+
+        private AuthenticationResponse SendEmailToUser(StandardUser standardUser)
+        {
+            var authenticationResponse = _userService.GetAuthenticationResponse(GetAuthUser(standardUser));
+            var firstName = standardUser.User.Name.Split(" ");
+            _emailSender.SendConfirmationEmail(firstName[0], standardUser.User.Email, authenticationResponse.RefreshToken, authenticationResponse.AccessToken);
+            return authenticationResponse;
+        }
+        private static AuthorizedUser GetAuthUser(StandardUser standardUser)
+        {
+            return new AuthorizedUser(standardUser.UserId, standardUser.User.Email, standardUser.User.Role.ToString(), standardUser.EmailConfirmed);
         }
     }
 }
