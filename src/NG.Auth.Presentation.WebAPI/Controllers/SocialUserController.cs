@@ -109,55 +109,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         {
             var authenticationResponse = _SocialUserService.Authenticate(credentials);
 
-            // SetTokenCookie(authenticationResponse.RefreshToken);
-
             return Ok(authenticationResponse);
-        }
-
-        /// <summary>
-        /// Generate a token for the given SocialUser, even if this is still not confirmed
-        /// </summary>
-        /// <param name="credentials">The SocialUser credentials to log in</param>
-        /// <remarks>
-        /// ## Response code meanings
-        /// - 200 - Token succesfully created.
-        /// - 400 - The model is not properly built.
-        /// - 500 - An internal server error. Something bad and unexpected happened.
-        /// - 543 - A handled error. This error was expected, check the message.
-        /// </remarks>
-        [HttpPost("GetToken")]
-        [ProducesResponseType(typeof(ApiError), 543)]
-        [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(AuthenticationResponse), (int)HttpStatusCode.OK)]
-        public IActionResult GetToken(StandardAuthenticationRequest credentials)
-        {
-            // var accessToken = _SocialUserService.GetToken(credentials);
-
-            return Ok();
-        }
-
-        /// <summary>
-        /// Give a new token
-        /// </summary>
-        /// <remarks>
-        /// ## Response code meanings
-        /// - 200 - Token succesfully created.
-        /// - 400 - The model is not properly built.
-        /// - 500 - An internal server error. Something bad and unexpected happened.
-        /// - 543 - A handled error. This error was expected, check the message.
-        /// </remarks>
-        [HttpPost("RefreshToken")]
-        public IActionResult RefreshToken()
-        {
-            // var refreshToken = Request.Cookies["refreshToken"];
-            var refreshToken = Request.Headers["refreshToken"];
-
-            //var authenticationResponse = _SocialUserService.RefreshToken(refreshToken);
-
-            // SetTokenCookie(authenticationResponse.RefreshToken);
-
-            return Ok();
         }
     }
 }

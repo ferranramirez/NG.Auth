@@ -6,7 +6,7 @@ namespace NG.Auth.Business.Contract
 {
     public interface IStandardUserService
     {
-        Task<AuthenticationResponse> RegisterAsync(RegisterRequest registerRequest);
+        Task<AuthenticationResponse> RegisterAsync(StandardRegisterRequest registerRequest);
         Task<ConfirmationEmailStatus> ConfirmEmail(string confirmationToken, string accessToken);
         AuthenticationResponse Authenticate(StandardAuthenticationRequest credentials);
         string GetToken(StandardAuthenticationRequest credentials);

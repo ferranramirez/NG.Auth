@@ -50,40 +50,26 @@ namespace NG.Auth.Business.Impl
             _errors = errors.Value;
         }
 
-        public async Task<AuthenticationResponse> RegisterAsync(SocialRegisterRequest registerRequest)
+        public async Task<SocialUser> RegisterAsync(SocialRegisterRequest registerRequest)
         {
-            var user = _unitOfWork.User.GetByEmail(registerRequest.Email);
-
-            if(user == null)
-            {
-                user = new User()
-                {
-                    Name = registerRequest.Name,
-                    Birthdate = registerRequest.Birthdate,
-                    PhoneNumber = registerRequest.PhoneNumber,
-                    Email = registerRequest.Email.ToLower(),
-                    Role = registerRequest.IsCommerce ? Role.Commerce : Role.Basic,
-                    Image = null,
-                };
-            }
-
+            var user = _userService.GetExistingUser(registerRequest);
             SocialUser socialUser = new SocialUser()
             {
                 User = user,
+                UserId = user.Id,
                 Provider = registerRequest.Provider,
                 SocialId = registerRequest.SocialId
             };
 
             _unitOfWork.SocialUser.Add(socialUser);
-
             await _unitOfWork.CommitAsync();
 
-            return _userService.GetAuthenticationResponse(GetAuthUser(socialUser));
-        }
+            return _unitOfWork.SocialUser.Get(registerRequest.SocialId, registerRequest.Provider);
+        }        
 
-        public AuthenticationResponse Authenticate(SocialAuthenticationRequest credentials)
+        public SocialUser Authenticate(SocialAuthenticationRequest credentials)
         {
-            SocialUser socialUser = null; // _unitOfWork.SocialUser.Get(socialId, provider);
+            SocialUser socialUser = _unitOfWork.SocialUser.Get(credentials.SocialId, credentials.Provider);
 
             if (socialUser == null)
             {
@@ -91,13 +77,7 @@ namespace NG.Auth.Business.Impl
                 throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
             }
 
-            return _userService.GetAuthenticationResponse(GetAuthUser(socialUser));
-        }
-
-        private static AuthorizedUser GetAuthUser(SocialUser socialUser)
-        {
-            return new AuthorizedUser(
-                            socialUser.UserId, socialUser.User.Email, socialUser.User.Role.ToString(), true);
+            return socialUser;
         }
     }
 }

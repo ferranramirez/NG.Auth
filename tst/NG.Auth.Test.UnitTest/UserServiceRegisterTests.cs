@@ -28,7 +28,7 @@ namespace NG.Auth.Test.UnitTest
         private readonly NullLogger<StandardUserService> _nullLogger;
         private readonly IStandardUserService _userService;
         private readonly User expected;
-        private readonly RegisterRequest userDto;
+        private readonly StandardRegisterRequest userDto;
         private readonly string hashedPassword;
 
         public UserServiceRegisterTests()
@@ -41,7 +41,7 @@ namespace NG.Auth.Test.UnitTest
                 Password = "secret123",
             };
 
-            userDto = new RegisterRequest
+            userDto = new StandardRegisterRequest
             {
                 Name = "Test",
                 Email = "basic@test.org",

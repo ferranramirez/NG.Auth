@@ -101,7 +101,6 @@ namespace NG.Auth.Business.Impl
                 _tokenHandler.GenerateRefreshToken(authUser));
         }
 
-
         public User GetUser(string changePasswordToken)
         {
             var email = _tokenHandler.GetEmailFromCache(changePasswordToken);

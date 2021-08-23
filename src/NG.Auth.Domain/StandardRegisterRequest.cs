@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NG.Auth.Domain
 {
-    public class RegisterRequest : CommonRegisterFields
+    public class StandardRegisterRequest : CommonRegisterFields
     {
         [Required]
         [MinLength(5)]

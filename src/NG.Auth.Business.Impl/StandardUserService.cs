@@ -50,23 +50,9 @@ namespace NG.Auth.Business.Impl
             _errors = errors.Value;
         }
 
-        public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest registerRequest)
+        public async Task<AuthenticationResponse> RegisterAsync(StandardRegisterRequest registerRequest)
         {
-            var user = _unitOfWork.User.GetByEmail(registerRequest.Email);
-
-            if (user == null)
-            {
-                user = new User()
-                {
-                    Name = registerRequest.Name,
-                    Birthdate = registerRequest.Birthdate,
-                    PhoneNumber = registerRequest.PhoneNumber,
-                    Email = registerRequest.Email.ToLower(),
-                    Role = registerRequest.IsCommerce ? Role.Commerce : Role.Basic,
-                    Image = null,
-                };
-            }
-
+            var user = _userService.GetExistingUser(registerRequest);
             StandardUser standardUser = new StandardUser()
             {
                 User = user,
@@ -75,7 +61,6 @@ namespace NG.Auth.Business.Impl
             };
 
             _unitOfWork.StandardUser.Add(standardUser);
-
             await _unitOfWork.CommitAsync();
 
             return SendEmailToUser(standardUser);
@@ -197,6 +182,7 @@ namespace NG.Auth.Business.Impl
             _emailSender.SendConfirmationEmail(firstName[0], standardUser.User.Email, authenticationResponse.RefreshToken, authenticationResponse.AccessToken);
             return authenticationResponse;
         }
+
         private static AuthorizedUser GetAuthUser(StandardUser standardUser)
         {
             return new AuthorizedUser(standardUser.UserId, standardUser.User.Email, standardUser.User.Role.ToString(), standardUser.EmailConfirmed);

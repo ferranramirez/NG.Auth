@@ -20,13 +20,16 @@ namespace NG.Auth.Business.Impl
     {
         private readonly IAuthorizationProvider _authorizationProvider;
         private readonly ITokenHandler _tokenHandler;
+        private readonly IAuthUnitOfWork _unitOfWork;
 
         public UserService(
             IAuthorizationProvider authorizationProvider,
-            ITokenHandler tokenHandler)
+            ITokenHandler tokenHandler,
+            IAuthUnitOfWork unitOfWork)
         {
             _authorizationProvider = authorizationProvider;
             _tokenHandler = tokenHandler;
+            _unitOfWork = unitOfWork;
         }
         public AuthenticationResponse GetAuthenticationResponse(AuthorizedUser authUser)
         {
@@ -38,6 +41,26 @@ namespace NG.Auth.Business.Impl
         public string GetAccessToken(AuthorizedUser authUser)
         {
             return _authorizationProvider.GetToken(authUser);
+        }
+
+        public User GetExistingUser(CommonRegisterFields registerRequest)
+        {
+            var user = _unitOfWork.User.GetByEmail(registerRequest.Email);
+
+            if (user == null)
+            {
+                user = new User()
+                {
+                    Name = registerRequest.Name,
+                    Birthdate = registerRequest.Birthdate,
+                    PhoneNumber = registerRequest.PhoneNumber,
+                    Email = registerRequest.Email.ToLower(),
+                    Role = registerRequest.IsCommerce ? Role.Commerce : Role.Basic,
+                    Image = null,
+                };
+            }
+
+            return user;
         }
     }
 }
