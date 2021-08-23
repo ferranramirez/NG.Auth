@@ -8,12 +8,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="NG.DBManager.Infrastructure.Contracts">
-      <HintPath>..\..\..\NG.DBManager\src\NG.DBManager.Infrastructure.Impl.EF\bin\Debug\netcoreapp3.1\NG.DBManager.Infrastructure.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="NG.DBManager.Infrastructure.Impl.EF">
-      <HintPath>..\..\..\NG.DBManager\src\NG.DBManager.Infrastructure.Impl.EF\bin\Debug\netcoreapp3.1\NG.DBManager.Infrastructure.Impl.EF.dll</HintPath>
-    </Reference>
+  <ItemGroup Label="NotGuiri Nuget">
+    <PackageReference Include="NG.DBManager.Infrastructure.Impl.EF" Version="1.0.55" />
   </ItemGroup>
 </Project>
