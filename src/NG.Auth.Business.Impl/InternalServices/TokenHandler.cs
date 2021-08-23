@@ -31,17 +31,17 @@ namespace NG.Auth.Business.Impl.InternalServices
             _tokenService = tokenService;
         }
 
-        public User GetUser(AuthenticationRequest credentials)
+        public StandardUser GetUser(StandardAuthenticationRequest credentials)
         {
             if (string.IsNullOrEmpty(credentials.PhoneNumber))
             {
-                return _unitOfWork.User
+                return _unitOfWork.StandardUser
                     .GetByEmail(credentials.EmailAddress.ToLower());
             }
             else
             {
-                return _unitOfWork.User
-                   .Find(u => u.PhoneNumber == credentials.PhoneNumber)
+                return _unitOfWork.StandardUser
+                   .Find(u => u.User.PhoneNumber == credentials.PhoneNumber)
                    .SingleOrDefault();
             }
         }

@@ -25,10 +25,10 @@ namespace NG.Auth.Test.UnitTest
         private readonly Mock<ITokenHandler> _tokenHandlerMock;
         private readonly Mock<IEmailSender> _emailSenderMock;
         private readonly Mock<IPasswordHasher> _passwordHasherMock;
-        private readonly NullLogger<UserService> _nullLogger;
-        private readonly IUserService _userService;
+        private readonly NullLogger<StandardUserService> _nullLogger;
+        private readonly IStandardUserService _userService;
         private readonly User expected;
-        private readonly RegisterRequest userDto;
+        private readonly StandardRegisterRequest userDto;
         private readonly string hashedPassword;
 
         public UserServiceRegisterTests()
@@ -41,7 +41,7 @@ namespace NG.Auth.Test.UnitTest
                 Password = "secret123",
             };
 
-            userDto = new RegisterRequest
+            userDto = new StandardRegisterRequest
             {
                 Name = "Test",
                 Email = "basic@test.org",
@@ -56,7 +56,7 @@ namespace NG.Auth.Test.UnitTest
             _tokenServiceMock = new Mock<ITokenService>();
             _tokenHandlerMock = new Mock<ITokenHandler>();
             _emailSenderMock = new Mock<IEmailSender>();
-            _nullLogger = new NullLogger<UserService>();
+            _nullLogger = new NullLogger<StandardUserService>();
 
             var errorsDictionary = new Dictionary<BusinessErrorType, BusinessErrorObject>
             {
@@ -65,9 +65,9 @@ namespace NG.Auth.Test.UnitTest
             };
             var _options = Options.Create(errorsDictionary);
 
-            _userService = new UserService(_unitOfWorkMock.Object, _passwordHasherMock.Object,
-                _authorizationProviderMock.Object, _tokenServiceMock.Object, _tokenHandlerMock.Object,
-                _emailSenderMock.Object, _nullLogger, _options);
+            //_userService = new StandardUserService(_unitOfWorkMock.Object, _passwordHasherMock.Object,
+            //    _authorizationProviderMock.Object, _tokenServiceMock.Object, _tokenHandlerMock.Object,
+            //    _emailSenderMock.Object, _nullLogger, _options);
         }
 
         [Fact(Skip = "Cannot know the Id of the mapped user when the mapping is done in the business layer")]

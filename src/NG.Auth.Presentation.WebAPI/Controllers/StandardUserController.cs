@@ -16,15 +16,15 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : Controller
+    public class StandardUserController : Controller
     {
-        private readonly IUserService _userService;
-        private readonly ILogger<UserController> _logger;
+        private readonly IStandardUserService _userService;
+        private readonly ILogger<StandardUserController> _logger;
         private readonly IConfiguration _configuration;
 
-        public UserController(
-            IUserService userService,
-            ILogger<UserController> logger,
+        public StandardUserController(
+            IStandardUserService userService,
+            ILogger<StandardUserController> logger,
             IConfiguration configuration)
         {
             _userService = userService;
@@ -48,7 +48,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(AuthenticationResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Register(RegisterRequest userDto)
+        public async Task<IActionResult> Register(StandardRegisterRequest userDto)
         {
             return Ok(await _userService.RegisterAsync(userDto));
         }
@@ -105,7 +105,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(AuthenticationResponse), (int)HttpStatusCode.OK)]
-        public IActionResult Authenticate(AuthenticationRequest credentials)
+        public IActionResult Authenticate(StandardAuthenticationRequest credentials)
         {
             var authenticationResponse = _userService.Authenticate(credentials);
 
@@ -130,7 +130,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(AuthenticationResponse), (int)HttpStatusCode.OK)]
-        public IActionResult GetToken(AuthenticationRequest credentials)
+        public IActionResult GetToken(StandardAuthenticationRequest credentials)
         {
             var accessToken = _userService.GetToken(credentials);
 

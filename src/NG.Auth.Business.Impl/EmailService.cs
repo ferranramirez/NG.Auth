@@ -51,28 +51,28 @@ namespace NG.Auth.Business.Impl
         {
             var tokenClaims = _tokenService.DecodeToken(AccessToken).Claims;
             var userId = Guid.Parse(tokenClaims.First(c => string.Equals(c.Type, ClaimTypes.NameIdentifier)).Value);
-            var user = _unitOfWork.User.Get(userId);
+            var standardUser = _unitOfWork.StandardUser.Get(userId);
 
-            if (user == null)
+            if (standardUser == null)
             {
                 return ConfirmationEmailStatus.Error;
             }
 
-            if (user.EmailConfirmed)
+            if (standardUser.EmailConfirmed)
             {
                 return ConfirmationEmailStatus.EmailAlreadyConfirmed;
             }
 
-            SendConfirmationEmailToUser(user);
+            SendConfirmationEmailToUser(standardUser);
 
             return ConfirmationEmailStatus.EmailSent;
         }
 
-        private AuthenticationResponse SendConfirmationEmailToUser(User user)
+        private AuthenticationResponse SendConfirmationEmailToUser(StandardUser standardUser)
         {
-            var authenticationResponse = GetAuthenticationResponse(user);
-            var firstName = user.Name.Split(" ");
-            _emailSender.SendConfirmationEmail(firstName[0], user.Email, authenticationResponse.RefreshToken, authenticationResponse.AccessToken);
+            var authenticationResponse = GetAuthenticationResponse(standardUser);
+            var firstName = standardUser.User.Name.Split(" ");
+            _emailSender.SendConfirmationEmail(firstName[0], standardUser.User.Email, authenticationResponse.RefreshToken, authenticationResponse.AccessToken);
             return authenticationResponse;
         }
 
@@ -91,15 +91,15 @@ namespace NG.Auth.Business.Impl
             return true;
         }
 
-        private AuthenticationResponse GetAuthenticationResponse(User user)
+        private AuthenticationResponse GetAuthenticationResponse(StandardUser standardUser)
         {
-            AuthorizedUser authUser = new AuthorizedUser(user.Id, user.Email, user.Role.ToString(), user.EmailConfirmed);
+            AuthorizedUser authUser = new AuthorizedUser(
+                standardUser.UserId, standardUser.User.Email, standardUser.User.Role.ToString(), standardUser.EmailConfirmed);
 
             return new AuthenticationResponse(
                 _authorizationProvider.GetToken(authUser),
                 _tokenHandler.GenerateRefreshToken(authUser));
         }
-
 
         public User GetUser(string changePasswordToken)
         {
