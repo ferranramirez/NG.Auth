@@ -38,7 +38,7 @@ namespace NG.Auth.Test.UnitTest
                 Id = Guid.NewGuid(),
                 Name = "Test",
                 Email = "basic@test.org",
-                Password = "secret123",
+                //Password = "secret123",
             };
 
             userDto = new StandardRegisterRequest
