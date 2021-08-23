@@ -40,7 +40,7 @@ namespace NG.Auth.Business.Impl.InternalServices
                 out MimeMessage message, out BodyBuilder builder, out string urlBase);
 
             _templateBuilder.ReplaceTags(ref builder, "#{validationLink}#",
-                string.Concat(urlBase, "/User?ConfirmationToken=", refreshToken, "&&AccessToken=", accessToken));
+                string.Concat(urlBase, "/StandardUser?ConfirmationToken=", refreshToken, "&&AccessToken=", accessToken));
 
             _ = SendMessage(host, port, userName, password, message, builder);
         }
