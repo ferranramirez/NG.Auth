@@ -10,6 +10,6 @@ namespace NG.Auth.Domain
         public string Provider { get; set; }
 
         [Required]
-        public Guid SocialId { get; set; }
+        public string SocialId { get; set; }
     }
 }
