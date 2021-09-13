@@ -24,7 +24,8 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ELASTIC_URL": "http://localhost:9200"
+        "ELASTIC_URL": "http://localhost:9200",
+        "GOOGLE_APPLICATION_CREDENTIALS": "C:\\source\\repos\\notguiri\\service-account-file.json"
       },
       "applicationUrl": "https://localhost:44327"
     }
