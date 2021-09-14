@@ -43,6 +43,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
         /// - 500 - An internal server error. Something bad and unexpected happened.
         /// - 543 - A handled error. This error was expected, check the message.
         /// </remarks>
+        [Obsolete]
         [HttpPost("Register")]
         [ProducesResponseType(typeof(ApiError), 543)]
         [ProducesResponseType(typeof(ApiError), (int)HttpStatusCode.InternalServerError)]

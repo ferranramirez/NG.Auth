@@ -8,6 +8,5 @@ namespace NG.Auth.Business.Contract
     public interface ISocialUserService
     {
         Task<SocialUser> RegisterAsync(SocialRegisterRequest registerRequest);
-        SocialUser Authenticate(SocialAuthenticationRequest credentials);
     }
 }

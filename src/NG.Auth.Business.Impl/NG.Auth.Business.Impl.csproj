@@ -17,13 +17,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FirebaseAdmin" Version="2.2.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\NG.Auth.Business.Contract\NG.Auth.Business.Contract.csproj" />
     <ProjectReference Include="..\NG.Auth.Domain\NG.Auth.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="NotGuiri Nuget">
-    <PackageReference Include="NG.Common.Library" Version="1.0.13" />
-    <PackageReference Include="NG.Common.Services" Version="1.0.13" />
+    <PackageReference Include="NG.Common.Library" Version="1.0.15" />
+    <PackageReference Include="NG.Common.Services" Version="1.0.15" />
     <PackageReference Include="NG.DBManager.Infrastructure.Contracts" Version="1.0.56" />
     <PackageReference Include="NG.DBManager.Infrastructure.Impl.EF" Version="1.0.56" />
   </ItemGroup>
