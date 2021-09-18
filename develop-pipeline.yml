@@ -1,4 +1,5 @@
 trigger:
+
 - develop
 
 pool:
@@ -6,17 +7,13 @@ pool:
 
 steps:
 - task: DownloadSecureFile@1
-  name: caCertificate
-  displayName: 'Download CA certificate'
   inputs:
-    secureFile: 'myCACertificate.pem'
+    secureFile: 'service-account-file-tst.json'
 
-- script: |
-    echo Installing $(caCertificate.secureFilePath) to the trusted CA directory...
-    sudo chown root:root $(caCertificate.secureFilePath)
-    sudo chmod a+r $(caCertificate.secureFilePath)
-    sudo ln -s -t /etc/ssl/certs/ $(caCertificate.secureFilePath)
-    
+- task: CmdLine@2
+  inputs:
+    script: 'echo ls'
+
 - task: replacetokens@3
   displayName: 'Replace tokens appsettings'
   inputs:
