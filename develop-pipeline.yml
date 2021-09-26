@@ -1,10 +1,19 @@
 trigger:
+
 - develop
 
 pool:
   vmImage: 'ubuntu-18.04'
 
 steps:
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'service-account-file-tst.json'
+
+- task: CmdLine@2
+  inputs:
+    script: 'echo ls'
+
 - task: replacetokens@3
   displayName: 'Replace tokens appsettings'
   inputs:
