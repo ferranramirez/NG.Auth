@@ -15,6 +15,7 @@ using NG.DBManager.Infrastructure.Contracts.Models.Enums;
 using NG.DBManager.Infrastructure.Contracts.UnitsOfWork;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -49,26 +50,28 @@ namespace NG.Auth.Business.Impl
                 Provider = registerRequest.Provider,
                 SocialId = registerRequest.SocialId
             };
-
-            _unitOfWork.SocialUser.Add(socialUser);
-            await _unitOfWork.CommitAsync();
-
-            await AddTokenClaimsAsync(registerRequest.SocialId);
-
-            return _unitOfWork.SocialUser.Get(registerRequest.SocialId, registerRequest.Provider);
-        }        
-
-        private async Task AddTokenClaimsAsync(string uid)
-        {
-            FirebaseAppService.GetInstance();
-            var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
-            SocialUser socialUser = _unitOfWork.SocialUser.Get(userRecord.Uid, userRecord.ProviderId);
-            if (userRecord == null || socialUser == null)
+                        
+            if (await AddTokenClaimsAsync(registerRequest.SocialId, socialUser))
             {
                 var error = _errors[BusinessErrorType.UserNotFound];
                 throw new NotGuiriBusinessException(error.Message, error.ErrorCode);
             }
+
+            _unitOfWork.SocialUser.Add(socialUser);
+            await _unitOfWork.CommitAsync();          
+
+            return _unitOfWork.SocialUser.Get(registerRequest.SocialId, registerRequest.Provider);
+        }
+
+        private async Task<bool> AddTokenClaimsAsync(string uid, SocialUser socialUser)
+        {
+            FirebaseAppService.GetInstance();
+            var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
+
+            if (userRecord == null || socialUser == null) return true;
+
             await FirebaseAuth.DefaultInstance.SetCustomUserClaimsAsync(uid, GetClaims(socialUser));
+            return false;
         }
 
         private static Dictionary<string, object> GetClaims(SocialUser socialUser)

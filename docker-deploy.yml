@@ -10,12 +10,14 @@ services:
         max_attempts: 3
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - GOOGLE_APPLICATION_CREDENTIALS=/data/service-account-file.json
     ports: 
       - "8082:80"
     networks:
       - backend
+    volumes:
+      - "${LOCAL_AUTH_PATH}:/data"
 
 networks:
   backend:
     external: true
-
