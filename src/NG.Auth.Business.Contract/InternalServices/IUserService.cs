@@ -8,6 +8,6 @@ namespace NG.Auth.Business.Contract.InternalServices
     {
         AuthenticationResponse GetAuthenticationResponse(AuthorizedUser authUser);
         string GetAccessToken(AuthorizedUser authUser);
-        User GetExistingUser(CommonRegisterFields registerRequest);
+        User GetExistingOrNewUser(CommonRegisterFields registerRequest);
     }
 }

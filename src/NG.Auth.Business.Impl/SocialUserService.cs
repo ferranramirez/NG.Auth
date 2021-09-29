@@ -42,7 +42,7 @@ namespace NG.Auth.Business.Impl
 
         public async Task<SocialUser> RegisterAsync(SocialRegisterRequest registerRequest)
         {
-            var user = _userService.GetExistingUser(registerRequest);
+            var user = _userService.GetExistingOrNewUser(registerRequest);
             SocialUser socialUser = new SocialUser()
             {
                 User = user,
