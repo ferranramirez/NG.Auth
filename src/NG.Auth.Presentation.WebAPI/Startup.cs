@@ -38,7 +38,7 @@ namespace NG.Auth.Presentation.WebAPI
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             services.AddSwaggerDocumentation(Configuration.GetSection("Documentation"), xmlFile);
 
-            services.AddJwtAuthentication(Configuration.GetSection("Secrets"));
+            services.AddJwtAuthentication(Configuration.GetSection("Token"));
 
             services.AddDistributedRedisCache(option =>
             {

@@ -8,7 +8,7 @@ namespace NG.Auth.Domain
     public class SocialAuthenticationRequest
     {
         [Required]
-        public Guid SocialId { get; set; }
+        public string SocialId { get; set; }
 
         [Required]
         public string Provider { get; set; }

@@ -43,7 +43,7 @@ namespace NG.Auth.Business.Impl
             return _authorizationProvider.GetToken(authUser);
         }
 
-        public User GetExistingUser(CommonRegisterFields registerRequest)
+        public User GetExistingOrNewUser(CommonRegisterFields registerRequest)
         {
             var user = _unitOfWork.User.GetByEmail(registerRequest.Email);
 
@@ -51,6 +51,7 @@ namespace NG.Auth.Business.Impl
             {
                 user = new User()
                 {
+                    Id = Guid.NewGuid(),
                     Name = registerRequest.Name,
                     Birthdate = registerRequest.Birthdate,
                     PhoneNumber = registerRequest.PhoneNumber,

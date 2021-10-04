@@ -52,7 +52,7 @@ namespace NG.Auth.Business.Impl
 
         public async Task<AuthenticationResponse> RegisterAsync(StandardRegisterRequest registerRequest)
         {
-            var user = _userService.GetExistingUser(registerRequest);
+            var user = _userService.GetExistingOrNewUser(registerRequest);
             StandardUser standardUser = new StandardUser()
             {
                 User = user,
