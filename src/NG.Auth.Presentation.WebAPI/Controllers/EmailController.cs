@@ -107,7 +107,7 @@ namespace NG.Auth.Presentation.WebAPI.Controllers
                 return View("ResetPasswordTokenExpired");
 
             var baseUrl = _configuration.GetSection("Urls").GetSection("Base").Value;
-            string newPasswordLink = string.Concat(baseUrl, "/User/ChangePassword");
+            string newPasswordLink = string.Concat(baseUrl, "/StandardUser/ChangePassword");
             string errorLink = string.Concat(baseUrl, "/Error");
 
             var newPasswordModel = new NewPasswordInfo(newPasswordLink, errorLink, ChangePasswordToken);
